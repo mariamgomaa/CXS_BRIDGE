@@ -1,0 +1,243 @@
+
+module control_unit_fsm (
+    input  logic       i_control_unit_fsm_clk,
+    input  logic       i_control_unit_fsm_rst_n,
+    input  logic        i_control_unit_fsm_fifo_empty,
+    input  logic        i_control_unit_fsm_pkt_start,
+    input  logic        i_control_unit_fsm_pkt_end,
+    input  logic [1:0]  i_control_unit_fsm_pkt_type,
+    input  logic [7:0]  i_control_unit_fsm_device_count,
+    input  logic         i_control_unit_fsm_header_valid,
+    input  logic         i_control_unit_fsm_config_done,
+
+    output logic        o_control_unit_fsm_config_address_counter,
+    output logic        o_control_unit_fsm_rd_config_en,
+    output logic        o_control_unit_fsm_rd_fifo_en,
+    output logic        o_control_unit_fsm_config_we,
+    output logic        o_control_unit_fsm_payload_valid,
+    output logic        o_control_unit_fsm_status_valid,
+    output logic        o_control_unit_fsm_first_cfg_tlp
+);
+
+logic write_configration_en;
+logic [7:0] device_cnt_rem;
+logic config_done;
+
+    typedef enum logic [2:0] {
+        IDLE        = 3'b000,
+        CFG_SCAN    = 3'b001,     // peek/pop a config-phase word, decide what it is
+        CFG_WR      = 3'b011,
+        LINK_SCAN   = 3'b010, // peek/pop the link word, decide validity
+        LINK_OK     = 3'b110,  // Moore: pulse status_valid for a good link word
+        DATA_SCAN   = 3'b111,   // peek/pop a data-phase word, decide what it is
+        DATA_BODY   = 3'b101,// Moore: pulse payload_valid for a body flit
+        ERROR       = 3'b100
+    } state_t;
+
+    typedef enum logic [1:0] {
+        PKT_CONFIG = 2'b00,
+        PKT_LINK   = 2'b01,
+        PKT_DATA   = 2'b10
+    } pkt_type_t;
+
+    state_t current_state, next_state;
+
+    //========================
+    // Moore output logic
+    //========================
+    always_comb begin
+        o_control_unit_fsm_rd_config_en  = 1'b0;
+        o_control_unit_fsm_rd_fifo_en    = 1'b0;
+        o_control_unit_fsm_config_we     = 1'b0;
+        o_control_unit_fsm_payload_valid = 1'b0;
+        o_control_unit_fsm_status_valid  = 1'b0;
+        o_control_unit_fsm_config_address_counter = 1'b0;
+        write_configration_en = 1'b0;
+        case (current_state)
+            IDLE: ; // all outputs 0
+
+            CFG_SCAN:
+            begin
+                o_control_unit_fsm_rd_fifo_en = 1'b1;
+                o_control_unit_fsm_config_address_counter = 1'b1;
+            end
+            CFG_WR:
+            begin
+                o_control_unit_fsm_config_we = 1'b1;
+                write_configration_en = 1'b1;
+            end
+            LINK_SCAN:
+            begin
+                o_control_unit_fsm_rd_fifo_en = 1'b1;
+            end
+            LINK_OK:
+            begin
+                o_control_unit_fsm_status_valid = 1'b1;
+            end
+            DATA_SCAN:
+            begin
+                o_control_unit_fsm_rd_fifo_en   = 1'b1;
+                o_control_unit_fsm_rd_config_en = 1'b1;
+            end
+
+            DATA_BODY: 
+            begin
+                o_control_unit_fsm_rd_config_en  = 1'b1;
+                o_control_unit_fsm_payload_valid = 1'b1;
+            end
+
+            ERROR:
+            begin
+                o_control_unit_fsm_status_valid = 1'b1;
+                
+            end
+            default:;
+        endcase
+    end
+
+    //========================
+    // Next-state logic
+    //========================
+always_comb begin
+    next_state = current_state; // safe default, kills the old latch bugs
+
+    case (current_state)
+
+        IDLE: 
+        begin
+            if (!i_control_unit_fsm_fifo_empty)
+                next_state = CFG_SCAN;
+            else 
+                next_state = IDLE ;
+        end
+
+        CFG_SCAN: 
+        begin
+
+            if (i_control_unit_fsm_pkt_start) 
+            begin
+                // First configuration TLP
+                if (o_control_unit_fsm_first_cfg_tlp) 
+                begin
+                    if ((i_control_unit_fsm_pkt_type == PKT_CONFIG) &&
+                        i_control_unit_fsm_header_valid)
+                        next_state = CFG_WR;
+                    else
+                        next_state = ERROR;
+                end
+
+                    // Continuation configuration TLP
+                else
+                begin
+                    if (i_control_unit_fsm_pkt_type == PKT_CONFIG)
+                    next_state = CFG_SCAN; //THIS PACKET NOT WRITE INTO CDM
+                        else
+                    next_state = ERROR;
+                end
+            end
+            else
+            begin
+                next_state = CFG_WR;
+            end
+        end
+
+        CFG_WR:
+        begin 
+            if (i_control_unit_fsm_pkt_end) 
+            begin
+                  next_state = config_done ?
+                  LINK_SCAN :
+                  CFG_SCAN; //FOR THE LAST PAYLOAD IN NOT LAST CONFIGRATION PACKET
+            end
+            else 
+            begin
+                 next_state = CFG_SCAN;
+            end
+        end 
+
+        LINK_SCAN: 
+        begin
+            if ( i_control_unit_fsm_pkt_type == PKT_LINK) 
+            begin
+                next_state = (i_control_unit_fsm_config_done  &&i_control_unit_fsm_pkt_start && i_control_unit_fsm_pkt_end)) ?
+                                LINK_OK : ERROR;
+            end
+            else
+            begin
+                next_state = LINK_SCAN;
+            end
+        end
+
+        LINK_OK: next_state = DATA_SCAN;
+
+        DATA_SCAN: 
+        begin
+            if (i_control_unit_fsm_pkt_start)
+            begin
+                if (i_control_unit_fsm_pkt_type == PKT_DATA)
+                next_state = DATA_SCAN ;
+                else 
+                next_state= ERROR;
+            end 
+            else 
+            begin
+                next_state = DATA_BODY;
+            end
+
+        end
+
+        DATA_BODY:
+        begin
+            if(i_control_unit_fsm_pkt_end)
+            begin
+                next_state = IDLE;
+            end
+            else 
+            begin
+                next_state = DATA_SCAN;
+            end 
+        end
+        ERROR: next_state = ERROR;
+
+        default: next_state = IDLE;
+
+        endcase
+    end
+
+    //========================
+    // State register
+    //========================
+always_ff @(posedge i_control_unit_fsm_clk or negedge i_control_unit_fsm_rst_n) begin
+    if (!i_control_unit_fsm_rst_n) begin
+        current_state  <= IDLE;
+    end
+    else begin
+        current_state <= next_state;
+    end
+end
+
+
+always_ff @(posedge i_control_unit_fsm_clk or negedge i_control_unit_fsm_rst_n) begin
+    if (!i_control_unit_fsm_rst_n)
+    begin
+        o_control_unit_fsm_first_cfg_tlp  <= 1'b1;
+        device_cnt_rem <= '0;
+    end
+    // Load from the first configuration header
+    else if (current_state == CFG_SCAN &&
+            i_control_unit_fsm_pkt_start &&
+            o_control_unit_fsm_first_cfg_tlp&&
+            i_control_unit_fsm_pkt_type == PKT_CONFIG &&
+            i_control_unit_fsm_header_valid)
+            begin
+            o_control_unit_fsm_first_cfg_tlp <= 1'b0;
+            device_cnt_rem <= i_control_unit_fsm_device_count;
+            end
+    // One complete device region stored
+    else if (write_configration_en && !i_control_unit_fsm_pkt_start && device_cnt_rem != 1)
+        device_cnt_rem <= device_cnt_rem - 1'b1;
+end
+
+assign config_done = (device_cnt_rem == 1);
+
+endmodule
