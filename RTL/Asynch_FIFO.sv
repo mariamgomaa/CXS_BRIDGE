@@ -28,10 +28,9 @@ logic [N:0]  rd_ptr_gray_FF2, wr_ptr_gray_FF2;
 
 //extra signal to represent the buf release for credit generator update 
 
-logic rd_en_gray;
-logic rd_en_gray_FF1,rd_en_gray_FF2 ;
-assign rd_en_gray = i_Asynch_FIFO_rd_en ^ (i_Asynch_FIFO_rd_en >> 1); // Binary to Gray code read en
-assign o_Asynch_FIFO_buf_release = rd_en_gray_FF2;
+
+logic rd_en_FF1,rd_en_FF2 ;
+assign o_Asynch_FIFO_buf_release = rd_en_FF2;
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -119,14 +118,14 @@ always_ff @(posedge i_Asynch_FIFO_wr_clk or negedge i_Asynch_FIFO_wr_rstn) begin
 
     if (!i_Asynch_FIFO_wr_rstn) begin
 
-        rd_en_gray_FF1 <= 0;
-        rd_en_gray_FF2 <= 0;
+        rd_en_FF1 <= 0;
+        rd_en_FF2 <= 0;
     end
     
     else begin
 
-        rd_en_gray_FF1 <= rd_en_gray;
-        rd_en_gray_FF2 <= rd_en_gray_FF1;
+        rd_en_FF1 <= i_Asynch_FIFO_rd_en;
+        rd_en_FF2 <= rd_en_FF1;
     end
   
 end
