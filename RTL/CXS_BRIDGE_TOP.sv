@@ -166,21 +166,7 @@ module CXS_SYSTEM_TOP #(
     );
 
 
-    //====================================================
-    // FIFO Write Enable
-    //
-    // Every valid received flit is written into the FIFO
-    //====================================================
-
     assign fifo_wr_en = rx_valid && !fifo_full;
-
-
-    //====================================================
-    // 2. ASYNCHRONOUS FIFO
-    //
-    // Write Domain = CXS RX Clock
-    // Read Domain  = System Processing Clock
-    //====================================================
 
     async_fifo #(
         .DEPTH (FIFO_DEPTH),
@@ -215,16 +201,6 @@ module CXS_SYSTEM_TOP #(
         .o_Asynch_FIFO_buf_release (fifo_buf_release)
     );
 
-
-    //====================================================
-    // 3. FLIT DECODER
-    //
-    // Splits one CXS flit into individual payloads
-    //
-    // NOTE:
-    // This assumes the corrected Flit_Decoder interface
-    // provides start/end/error information.
-    //====================================================
 
     Flit_Decoder #(
         .CXSMAXPAYLOADPERFLIT (CXSMAXPAYLOADPERFLIT),
@@ -337,14 +313,6 @@ module CXS_SYSTEM_TOP #(
     );
 
 
-    //====================================================
-    // 5. ENCRYPTION UNIT
-    //
-    // payload_data = 8-bit payload data
-    //
-    // enc_mode[0] is currently used because your
-    // encryption_unit has a 1-bit mode input.
-    //====================================================
 
     encryption_unit #(
         .DATA_WIDTH (DATA_W)
@@ -367,12 +335,6 @@ module CXS_SYSTEM_TOP #(
     );
 
 
-    //====================================================
-    // 6. PARITY UNIT
-    //
-    // parity_mode[0] is used because the current
-    // parity_unit has a 1-bit parity mode input.
-    //====================================================
 
     parity_unit #(
         .DATA_W (ENCRYPTED_W)
@@ -394,16 +356,6 @@ module CXS_SYSTEM_TOP #(
             (parity_done)
     );
 
-
-    //====================================================
-    // 7. CDM WRITE PATH
-    //
-    // Configuration packets:
-    //      Control Unit --> CDM
-    //
-    // Normal payload:
-    //      Control Unit --> Encryption --> Parity --> CDM
-    //====================================================
 
     always_comb begin
 
@@ -450,19 +402,10 @@ module CXS_SYSTEM_TOP #(
     end
 
 
-    //====================================================
-    // CDM READ PATH
-    //
-    // Used by Control Unit to read configuration data
-    //====================================================
 
     assign cdm_rd_en      = rd_config_en;
     assign cdm_rd_address = payload_address;
 
-
-    //====================================================
-    // 8. CENTRAL DATA MEMORY
-    //====================================================
 
     central_data_memory #(
         .DATA_WIDTH (CDM_DATA_W),
