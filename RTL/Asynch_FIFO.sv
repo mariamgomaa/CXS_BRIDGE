@@ -17,6 +17,8 @@ module async_fifo #(parameter DEPTH = 16, WIDTH = 39) ( // DEPTH FOR THIS VERSIO
     
 );
 
+integer i;
+
 localparam N = $clog2(DEPTH);
 
 logic [N:0]  rd_ptr, wr_ptr; // Read and Write Pointers (binary)
@@ -28,9 +30,9 @@ logic [N:0]  rd_ptr_gray_FF2, wr_ptr_gray_FF2;
 
 //extra signal to represent the buf release for credit generator update 
 
-
-logic rd_en_FF1,rd_en_FF2 ;
-assign o_Asynch_FIFO_buf_release = rd_en_FF2;
+logic buf_release_trigger;
+logic buf_release_trigger_FF1,buf_release_trigger_FF2 ;
+assign o_Asynch_FIFO_buf_release = buf_release_trigger_FF2;
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -67,14 +69,25 @@ end
 always_ff @(posedge i_Asynch_FIFO_rd_clk or negedge i_Asynch_FIFO_rd_rstn) begin
 
     if (!i_Asynch_FIFO_rd_rstn)
+    begin
+        for (i=0;i<DEPTH;i++)
+        begin
+            FIFO[i] <= 'b0;
+        end 
         rd_ptr <= 0;
-
-    else if (!o_Asynch_FIFO_empty && i_Asynch_FIFO_rd_en) begin
-
+        buf_release_trigger = 1'b0;
+        o_Asynch_FIFO_data_out<='b0;
+    end 
+    else if (!o_Asynch_FIFO_empty && i_Asynch_FIFO_rd_en) 
+    begin
         o_Asynch_FIFO_data_out <= FIFO[rd_ptr[N-1:0]];
         rd_ptr <= rd_ptr + 1;     
+        buf_release_trigger <= 1'b1;
     end
-
+    else
+    begin 
+    buf_release_trigger <= 1'b0;
+    end
 end
 
 // 2-FF WRITE PTR
@@ -118,14 +131,14 @@ always_ff @(posedge i_Asynch_FIFO_wr_clk or negedge i_Asynch_FIFO_wr_rstn) begin
 
     if (!i_Asynch_FIFO_wr_rstn) begin
 
-        rd_en_FF1 <= 0;
-        rd_en_FF2 <= 0;
+        buf_release_trigger_FF1 <= 0;
+        buf_release_trigger_FF2 <= 0;
     end
     
     else begin
 
-        rd_en_FF1 <= i_Asynch_FIFO_rd_en;
-        rd_en_FF2 <= rd_en_FF1;
+        buf_release_trigger_FF1 <= buf_release_trigger;
+        buf_release_trigger_FF2 <= buf_release_trigger_FF1;
     end
   
 end

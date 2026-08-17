@@ -3,7 +3,7 @@ module control_unit #(
     parameter int   PAYLOAD_W = 16,
     parameter int   ADDR_W    = 8,
     parameter int   DATA_W    = 8,
-    localparam int  PAYLOAD_INFO_W=PAYLOAD_W+2
+    parameter int  PAYLOAD_INFO_W=PAYLOAD_W+3
 )
 (
     //system signals 
@@ -43,10 +43,12 @@ module control_unit #(
 
     logic pkt_start;
     logic pkt_end;
+    logic pkt_error;
     logic [PAYLOAD_W-1:0] payload_reg;
 
     assign pkt_start = i_control_unit_fifo_data[PAYLOAD_INFO_W-1];
     assign pkt_end   = i_control_unit_fifo_data[PAYLOAD_INFO_W-2];
+    assign pkt_error   = i_control_unit_fifo_data[PAYLOAD_INFO_W-3];
 //register the data for storing the correct value in cdm 
     always_ff @(posedge i_control_unit_clk or negedge i_control_unit_rst_n) begin
         if (!i_control_unit_rst_n)
@@ -117,6 +119,8 @@ module control_unit #(
 
         .i_control_unit_fsm_pkt_start    (pkt_start),
         .i_control_unit_fsm_pkt_end      (pkt_end),
+        .i_control_unit_fsm_pkt_error     (pkt_error),
+
 
         .i_control_unit_fsm_pkt_type     (pkt_type),
         .i_control_unit_fsm_device_count  (dev_count),

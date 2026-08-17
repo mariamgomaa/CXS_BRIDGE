@@ -5,7 +5,6 @@ module CXS_Boundry_Extractor #(
     parameter int FIFO_WIDTH = CNTL_W + CXSDATAFLITWIDTH
 ) (
     input logic [CXSDATAFLITWIDTH-1 : 0 ]      i_boundry_extractor_cxsdata,
-    input logic [CNTL_W-1 : 0 ]                i_boundry_extractor_cxscntl_data,
     input logic [CXSMAXPAYLOADPERFLIT-1 : 0 ]  i_boundry_extractor_start_field,
     input logic [CXSMAXPAYLOADPERFLIT-1 : 0 ]  i_boundry_extractor_end_filed,
     input logic [CXSMAXPAYLOADPERFLIT-1 : 0 ]  i_boundry_extractor_error_field,

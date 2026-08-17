@@ -18,7 +18,7 @@ module CXS_RX_TOP #(
     input logic                          i_CXS_RX_TOP_CXSVALID,
     input logic                          i_CXS_RX_TOP_CXSACTIVEREQ,
     input logic                          i_CXS_RX_TOP_CXSCRDRTN,
-    input logic                          i_CXS_RX_TOP_buf_release,
+    input logic                          i_CXS_RX_TOP_buf_release,  //from asynchronous fifo 
 
     // output logic                         o_CXS_RX_TOP_CXSDEACTHINT,
     output logic                         o_CXS_RX_TOP_CXSCRDGNT,
@@ -96,7 +96,6 @@ assign o_CXS_RX_TOP_VALID = flit_valid;
     u_CXS_Boundry_Extractor
 (
     .i_boundry_extractor_cxsdata(cxsdata),
-    .i_boundry_extractor_cxscntl_data(cxscntl_data),
     .i_boundry_extractor_start_field(start_field),
     .i_boundry_extractor_end_filed(end_field),
     .i_boundry_extractor_error_field(error_field),

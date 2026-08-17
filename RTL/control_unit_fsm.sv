@@ -9,7 +9,7 @@ module control_unit_fsm (
     input  logic [7:0]  i_control_unit_fsm_device_count,
     input  logic         i_control_unit_fsm_header_valid,
     input  logic         i_control_unit_fsm_config_done,
-
+    input  logic         i_control_unit_fsm_pkt_error,
     output logic        o_control_unit_fsm_config_address_counter,
     output logic        o_control_unit_fsm_rd_config_en,
     output logic        o_control_unit_fsm_rd_fifo_en,
@@ -120,7 +120,8 @@ always_comb begin
                 if (o_control_unit_fsm_first_cfg_tlp) 
                 begin
                     if ((i_control_unit_fsm_pkt_type == PKT_CONFIG) &&
-                        i_control_unit_fsm_header_valid)
+                        i_control_unit_fsm_header_valid &&
+                        !i_control_unit_fsm_pkt_error)
                         next_state = CFG_WR;
                     else
                         next_state = ERROR;
@@ -129,7 +130,7 @@ always_comb begin
                     // Continuation configuration TLP
                 else
                 begin
-                    if (i_control_unit_fsm_pkt_type == PKT_CONFIG)
+                    if (i_control_unit_fsm_pkt_type == PKT_CONFIG &&!i_control_unit_fsm_pkt_error)
                     next_state = CFG_SCAN; //THIS PACKET NOT WRITE INTO CDM
                         else
                     next_state = ERROR;
@@ -159,7 +160,7 @@ always_comb begin
         begin
             if ( i_control_unit_fsm_pkt_type == PKT_LINK) 
             begin
-                next_state = (i_control_unit_fsm_config_done  &&i_control_unit_fsm_pkt_start && i_control_unit_fsm_pkt_end)) ?
+                next_state = (i_control_unit_fsm_config_done  &&i_control_unit_fsm_pkt_start && i_control_unit_fsm_pkt_end) ?
                                 LINK_OK : ERROR;
             end
             else
@@ -174,7 +175,7 @@ always_comb begin
         begin
             if (i_control_unit_fsm_pkt_start)
             begin
-                if (i_control_unit_fsm_pkt_type == PKT_DATA)
+                if (i_control_unit_fsm_pkt_type == PKT_DATA &&!i_control_unit_fsm_pkt_error)
                 next_state = DATA_SCAN ;
                 else 
                 next_state= ERROR;
