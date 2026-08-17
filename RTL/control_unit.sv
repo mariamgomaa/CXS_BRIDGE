@@ -11,7 +11,9 @@ module control_unit #(
     input  logic                  i_control_unit_rst_n,
 
     // FIFO Interface
-    input  logic                  i_control_unit_fifo_empty,
+    input  logic                  i_control_unit_flit_decoder_cu_valid,
+    //input  logic                  i_control_unit_data_valid,
+
     input  logic [PAYLOAD_INFO_W-1:0]   i_control_unit_fifo_data,
 
     // cdm interface 
@@ -20,9 +22,12 @@ module control_unit #(
 
     // FSM outputs
     output logic                  o_control_unit_rd_fifo_en,
+
+
     output logic                  o_control_unit_config_we,
     output logic                  o_control_unit_payload_valid,
     output logic                  o_control_unit_status_valid,
+    output logic                  o_control_unit_error,
     output logic                  o_control_unit_rd_config_en,
 
     // Datapath
@@ -49,12 +54,23 @@ module control_unit #(
     assign pkt_start = i_control_unit_fifo_data[PAYLOAD_INFO_W-1];
     assign pkt_end   = i_control_unit_fifo_data[PAYLOAD_INFO_W-2];
     assign pkt_error   = i_control_unit_fifo_data[PAYLOAD_INFO_W-3];
+
 //register the data for storing the correct value in cdm 
     always_ff @(posedge i_control_unit_clk or negedge i_control_unit_rst_n) begin
         if (!i_control_unit_rst_n)
+        begin
             payload_reg <= '0;
+            // pkt_start <= 1'b0;
+            // pkt_end   <= 1'b0;
+            // pkt_error <= 1'b0;
+        end
         else if (o_control_unit_rd_fifo_en)
+        begin
             payload_reg <= i_control_unit_fifo_data[PAYLOAD_W-1:0];
+        end
+            // pkt_start <= i_control_unit_fifo_data[PAYLOAD_INFO_W-1];
+            // pkt_end   <= i_control_unit_fifo_data[PAYLOAD_INFO_W-2];
+            // pkt_error   <= i_control_unit_fifo_data[PAYLOAD_INFO_W-3];
     end
 
     //address internal wire 
@@ -115,7 +131,7 @@ module control_unit #(
         .i_control_unit_fsm_clk          (i_control_unit_clk),
         .i_control_unit_fsm_rst_n        (i_control_unit_rst_n),
 
-        .i_control_unit_fsm_fifo_empty   (i_control_unit_fifo_empty),
+        .i_control_unit_fsm_flit_decoder_cu_valid   (i_control_unit_flit_decoder_cu_valid),
 
         .i_control_unit_fsm_pkt_start    (pkt_start),
         .i_control_unit_fsm_pkt_end      (pkt_end),
@@ -134,6 +150,7 @@ module control_unit #(
         .o_control_unit_fsm_config_we    (o_control_unit_config_we),
         .o_control_unit_fsm_payload_valid(o_control_unit_payload_valid),
         .o_control_unit_fsm_first_cfg_tlp(first_cfg_tlp),
+        .o_control_unit_fsm_error(o_control_unit_error),
         .o_control_unit_fsm_status_valid (o_control_unit_status_valid)
     );
 

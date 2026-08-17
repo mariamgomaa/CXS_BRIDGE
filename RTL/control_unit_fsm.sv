@@ -2,7 +2,7 @@
 module control_unit_fsm (
     input  logic       i_control_unit_fsm_clk,
     input  logic       i_control_unit_fsm_rst_n,
-    input  logic        i_control_unit_fsm_fifo_empty,
+    input  logic        i_control_unit_fsm_flit_decoder_cu_valid,
     input  logic        i_control_unit_fsm_pkt_start,
     input  logic        i_control_unit_fsm_pkt_end,
     input  logic [1:0]  i_control_unit_fsm_pkt_type,
@@ -13,15 +13,18 @@ module control_unit_fsm (
     output logic        o_control_unit_fsm_config_address_counter,
     output logic        o_control_unit_fsm_rd_config_en,
     output logic        o_control_unit_fsm_rd_fifo_en,
+
     output logic        o_control_unit_fsm_config_we,
     output logic        o_control_unit_fsm_payload_valid,
     output logic        o_control_unit_fsm_status_valid,
+    output logic        o_control_unit_fsm_error  ,
     output logic        o_control_unit_fsm_first_cfg_tlp
 );
 
 logic write_configration_en;
 logic [7:0] device_cnt_rem;
-logic config_done;
+logic config_count_done;
+logic pkt_end_reg;
 
     typedef enum logic [2:0] {
         IDLE        = 3'b000,
@@ -51,20 +54,21 @@ logic config_done;
         o_control_unit_fsm_config_we     = 1'b0;
         o_control_unit_fsm_payload_valid = 1'b0;
         o_control_unit_fsm_status_valid  = 1'b0;
-        o_control_unit_fsm_config_address_counter = 1'b0;
-        write_configration_en = 1'b0;
+        o_control_unit_fsm_error  = 1'b0;
+        //o_control_unit_fsm_config_address_counter = 1'b0;
+        //write_configration_en = 1'b0;
         case (current_state)
             IDLE: ; // all outputs 0
 
             CFG_SCAN:
             begin
                 o_control_unit_fsm_rd_fifo_en = 1'b1;
-                o_control_unit_fsm_config_address_counter = 1'b1;
+                //o_control_unit_fsm_config_address_counter = 1'b1;
             end
             CFG_WR:
             begin
                 o_control_unit_fsm_config_we = 1'b1;
-                write_configration_en = 1'b1;
+                //write_configration_en = 1'b1;
             end
             LINK_SCAN:
             begin
@@ -89,7 +93,9 @@ logic config_done;
             ERROR:
             begin
                 o_control_unit_fsm_status_valid = 1'b1;
-                
+                o_control_unit_fsm_rd_fifo_en   = 1'b1;
+                o_control_unit_fsm_error  = 1'b1;
+
             end
             default:;
         endcase
@@ -100,12 +106,13 @@ logic config_done;
     //========================
 always_comb begin
     next_state = current_state; // safe default, kills the old latch bugs
-
+    o_control_unit_fsm_config_address_counter = 1'b0; //need in special case in scan configration
+    write_configration_en = 1'b0;
     case (current_state)
 
         IDLE: 
         begin
-            if (!i_control_unit_fsm_fifo_empty)
+            if (i_control_unit_fsm_flit_decoder_cu_valid)
                 next_state = CFG_SCAN;
             else 
                 next_state = IDLE ;
@@ -113,7 +120,9 @@ always_comb begin
 
         CFG_SCAN: 
         begin
-
+            
+        if (i_control_unit_fsm_flit_decoder_cu_valid)
+        begin
             if (i_control_unit_fsm_pkt_start) 
             begin
                 // First configuration TLP
@@ -122,7 +131,11 @@ always_comb begin
                     if ((i_control_unit_fsm_pkt_type == PKT_CONFIG) &&
                         i_control_unit_fsm_header_valid &&
                         !i_control_unit_fsm_pkt_error)
+                        begin
                         next_state = CFG_WR;
+                        o_control_unit_fsm_config_address_counter = 1'b1;
+                        write_configration_en = 1'b1;
+                        end
                     else
                         next_state = ERROR;
                 end
@@ -131,36 +144,43 @@ always_comb begin
                 else
                 begin
                     if (i_control_unit_fsm_pkt_type == PKT_CONFIG &&!i_control_unit_fsm_pkt_error)
+                    begin
                     next_state = CFG_SCAN; //THIS PACKET NOT WRITE INTO CDM
+                    o_control_unit_fsm_config_address_counter = 1'b1;
+                    end
                         else
                     next_state = ERROR;
                 end
             end
             else
             begin
+                o_control_unit_fsm_config_address_counter = 1'b1;
                 next_state = CFG_WR;
+                write_configration_en = 1'b1;
             end
+        end 
+        else
+        next_state = CFG_SCAN;
         end
 
         CFG_WR:
         begin 
-            if (i_control_unit_fsm_pkt_end) 
+            if (pkt_end_reg && config_count_done) 
             begin
-                  next_state = config_done ?
-                  LINK_SCAN :
-                  CFG_SCAN; //FOR THE LAST PAYLOAD IN NOT LAST CONFIGRATION PACKET
+            next_state = LINK_SCAN ;
             end
-            else 
-            begin
-                 next_state = CFG_SCAN;
-            end
+            else
+            next_state =CFG_SCAN; 
+
         end 
 
         LINK_SCAN: 
         begin
+        if (i_control_unit_fsm_flit_decoder_cu_valid)
+        begin
             if ( i_control_unit_fsm_pkt_type == PKT_LINK) 
             begin
-                next_state = (i_control_unit_fsm_config_done  &&i_control_unit_fsm_pkt_start && i_control_unit_fsm_pkt_end) ?
+                next_state = (i_control_unit_fsm_pkt_start && i_control_unit_fsm_pkt_end) ? //i_control_unit_fsm_config_done  && this removed till modify the cdm*************
                                 LINK_OK : ERROR;
             end
             else
@@ -168,10 +188,17 @@ always_comb begin
                 next_state = LINK_SCAN;
             end
         end
+        else 
+        begin
+            next_state = LINK_SCAN;
+        end
+        end
 
         LINK_OK: next_state = DATA_SCAN;
 
         DATA_SCAN: 
+        begin
+            if (i_control_unit_fsm_flit_decoder_cu_valid)
         begin
             if (i_control_unit_fsm_pkt_start)
             begin
@@ -184,12 +211,16 @@ always_comb begin
             begin
                 next_state = DATA_BODY;
             end
-
+        end
+        else 
+        begin
+        next_state = DATA_SCAN ;
+        end
         end
 
         DATA_BODY:
         begin
-            if(i_control_unit_fsm_pkt_end)
+            if(pkt_end_reg)
             begin
                 next_state = IDLE;
             end
@@ -198,7 +229,13 @@ always_comb begin
                 next_state = DATA_SCAN;
             end 
         end
-        ERROR: next_state = ERROR;
+        ERROR: //popping the bad tlp not store or use this data till end =1
+        begin
+            if (i_control_unit_fsm_flit_decoder_cu_valid && pkt_end_reg)
+                next_state = IDLE;
+            else
+                next_state = ERROR;
+        end
 
         default: next_state = IDLE;
 
@@ -217,12 +254,12 @@ always_ff @(posedge i_control_unit_fsm_clk or negedge i_control_unit_fsm_rst_n) 
     end
 end
 
-
+//flip flop for device count and configration pkt count 
 always_ff @(posedge i_control_unit_fsm_clk or negedge i_control_unit_fsm_rst_n) begin
     if (!i_control_unit_fsm_rst_n)
     begin
         o_control_unit_fsm_first_cfg_tlp  <= 1'b1;
-        device_cnt_rem <= '0;
+        device_cnt_rem <= 'b1;
     end
     // Load from the first configuration header
     else if (current_state == CFG_SCAN &&
@@ -235,10 +272,19 @@ always_ff @(posedge i_control_unit_fsm_clk or negedge i_control_unit_fsm_rst_n) 
             device_cnt_rem <= i_control_unit_fsm_device_count;
             end
     // One complete device region stored
-    else if (write_configration_en && !i_control_unit_fsm_pkt_start && device_cnt_rem != 1)
+    else if (write_configration_en && !i_control_unit_fsm_pkt_start && device_cnt_rem != 0)
         device_cnt_rem <= device_cnt_rem - 1'b1;
 end
 
-assign config_done = (device_cnt_rem == 1);
+assign config_count_done = (device_cnt_rem == 0);
+
+
+
+always_ff @(posedge i_control_unit_fsm_clk or negedge i_control_unit_fsm_rst_n) begin
+    if (!i_control_unit_fsm_rst_n)
+        pkt_end_reg <= 1'b0;
+    else if (i_control_unit_fsm_flit_decoder_cu_valid) // i edit here for error handle current_state == CFG_SCAN && 
+        pkt_end_reg <= i_control_unit_fsm_pkt_end;
+end
 
 endmodule

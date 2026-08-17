@@ -56,6 +56,9 @@ module CXS_SYSTEM_TOP #(
 
     output logic                         o_cdm_write_done,
     output logic                         o_cdm_write_error,
+    output logic                         o_pkt_error,
+    output logic                         o_status_valid,
+
     output logic                         o_cdm_read_error
 );
 
@@ -93,7 +96,6 @@ module CXS_SYSTEM_TOP #(
     //--------------------------------------------------
     logic                  config_we;
     logic                  payload_valid;
-    logic                  status_valid;
     logic                  rd_config_en;
 
     logic [ADDR_W-1:0]     payload_address;
@@ -252,7 +254,7 @@ module CXS_SYSTEM_TOP #(
         //------------------------------------------------
         // Flit Decoder Interface
         //------------------------------------------------
-        .i_control_unit_fifo_empty(!flit_decoder_cu_valid),
+        .i_control_unit_flit_decoder_cu_valid(flit_decoder_cu_valid),
         .i_control_unit_fifo_data (decoded_payload),
 
         //------------------------------------------------
@@ -275,8 +277,11 @@ module CXS_SYSTEM_TOP #(
         .o_control_unit_payload_valid
             (payload_valid),
 
+        .o_control_unit_error
+        (o_pkt_error),
+
         .o_control_unit_status_valid
-            (status_valid),
+            (o_status_valid),
 
         .o_control_unit_rd_config_en
             (rd_config_en),

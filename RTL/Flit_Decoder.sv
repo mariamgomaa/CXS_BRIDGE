@@ -3,7 +3,7 @@ module Flit_Decoder #(
     parameter int CXSDATAFLITWIDTH     = 32,
     parameter int CNTL_W               = 3 * CXSMAXPAYLOADPERFLIT,
     parameter int FIFO_WIDTH            = CNTL_W + CXSDATAFLITWIDTH,
-    parameter int PAYLOAD_INFO_W             = 19        //make it parameteized later --->**************
+    parameter int PAYLOAD_INFO_W             = FIFO_WIDTH/2        //make it parameteized later --->**************
 )(
     input  logic                   i_Flit_Decoder_clk,
     input  logic                   i_Flit_Decoder_rst_n,
