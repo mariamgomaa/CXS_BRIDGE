@@ -17,8 +17,12 @@ module control_unit_fsm (
     output logic        o_control_unit_fsm_config_we,
     output logic        o_control_unit_fsm_payload_valid,
     output logic        o_control_unit_fsm_status_valid,
-    output logic        o_control_unit_fsm_error  ,
-    output logic        o_control_unit_fsm_first_cfg_tlp
+    output logic        o_control_unit_fsm_first_cfg_tlp,
+    output logic        o_control_unit_fsm_new_config_pkt,
+
+
+    output logic [1:0]  o_control_unit_fsm_status_pkt_type,   // which pkt_type this status refers to ass error
+    output logic [1:0]  o_control_unit_fsm_status_error_type 
 );
 
 logic write_configration_en;
@@ -45,6 +49,22 @@ logic pkt_end_reg;
 
     state_t current_state, next_state;
 
+ typedef enum logic [1:0] {
+        ERR_NONE        = 2'b00,
+        ERR_HEADER      = 2'b01,   // header_valid low / pkt_error on the header word
+        ERR_TRANSACTION = 2'b10
+    } error_type_t;
+
+
+    // error status internal signal 
+    error_type_t error_type_next;
+    logic [1:0]  error_pkt_type_next;
+    error_type_t error_type_reg;
+    logic [1:0]  err_pkt_type_reg;
+    logic data_active;
+
+
+
     //========================
     // Moore output logic
     //========================
@@ -54,7 +74,10 @@ logic pkt_end_reg;
         o_control_unit_fsm_config_we     = 1'b0;
         o_control_unit_fsm_payload_valid = 1'b0;
         o_control_unit_fsm_status_valid  = 1'b0;
-        o_control_unit_fsm_error  = 1'b0;
+
+        o_control_unit_fsm_status_pkt_type  = 2'b00;    // for error status 
+        o_control_unit_fsm_status_error_type = ERR_NONE; // for erorr  status output 
+
         //o_control_unit_fsm_config_address_counter = 1'b0;
         //write_configration_en = 1'b0;
         case (current_state)
@@ -77,6 +100,7 @@ logic pkt_end_reg;
             LINK_OK:
             begin
                 o_control_unit_fsm_status_valid = 1'b1;
+                o_control_unit_fsm_status_error_type = ERR_NONE;
             end
             DATA_SCAN:
             begin
@@ -94,7 +118,8 @@ logic pkt_end_reg;
             begin
                 o_control_unit_fsm_status_valid = 1'b1;
                 o_control_unit_fsm_rd_fifo_en   = 1'b1;
-                o_control_unit_fsm_error  = 1'b1;
+                o_control_unit_fsm_status_pkt_type   = err_pkt_type_reg;
+                o_control_unit_fsm_status_error_type = error_type_reg;
 
             end
             default:;
@@ -108,6 +133,11 @@ always_comb begin
     next_state = current_state; // safe default, kills the old latch bugs
     o_control_unit_fsm_config_address_counter = 1'b0; //need in special case in scan configration
     write_configration_en = 1'b0;
+    o_control_unit_fsm_new_config_pkt = 1'b0;
+
+    error_type_next     = ERR_NONE; //status error register
+    error_pkt_type_next = 2'b00;
+
     case (current_state)
 
         IDLE: 
@@ -125,19 +155,34 @@ always_comb begin
         begin
             if (i_control_unit_fsm_pkt_start) 
             begin
+
                 // First configuration TLP
                 if (o_control_unit_fsm_first_cfg_tlp) 
                 begin
-                    if ((i_control_unit_fsm_pkt_type == PKT_CONFIG) &&
-                        i_control_unit_fsm_header_valid &&
+                    if ((i_control_unit_fsm_pkt_type == PKT_CONFIG))
+                    begin
+                    if(i_control_unit_fsm_header_valid &&
                         !i_control_unit_fsm_pkt_error)
                         begin
                         next_state = CFG_WR;
                         o_control_unit_fsm_config_address_counter = 1'b1;
                         write_configration_en = 1'b1;
                         end
+
+                    else 
+                        begin
+                        next_state           = ERROR;
+                        error_type_next       = ERR_HEADER;   
+                        error_pkt_type_next   = i_control_unit_fsm_pkt_type;
+                        end
+                    end
+
                     else
+                    begin
                         next_state = ERROR;
+                        error_type_next       = ERR_TRANSACTION;   
+                        error_pkt_type_next   = i_control_unit_fsm_pkt_type;
+                    end
                 end
 
                     // Continuation configuration TLP
@@ -148,16 +193,23 @@ always_comb begin
                     next_state = CFG_SCAN; //THIS PACKET NOT WRITE INTO CDM
                     o_control_unit_fsm_config_address_counter = 1'b1;
                     end
-                        else
+                    
+                    else
+                    begin
                     next_state = ERROR;
+                    error_type_next       = ERR_TRANSACTION;   
+                    error_pkt_type_next   = i_control_unit_fsm_pkt_type;
+                    end
                 end
             end
+
             else
             begin
                 o_control_unit_fsm_config_address_counter = 1'b1;
                 next_state = CFG_WR;
                 write_configration_en = 1'b1;
             end
+
         end 
         else
         next_state = CFG_SCAN;
@@ -180,8 +232,13 @@ always_comb begin
         begin
             if ( i_control_unit_fsm_pkt_type == PKT_LINK) 
             begin
-                next_state = (i_control_unit_fsm_pkt_start && i_control_unit_fsm_pkt_end) ? //i_control_unit_fsm_config_done  && this removed till modify the cdm*************
-                                LINK_OK : ERROR;
+                if (i_control_unit_fsm_pkt_start && i_control_unit_fsm_pkt_end)
+                    next_state = LINK_OK;
+                else begin
+                    next_state           = ERROR;
+                    error_type_next       = ERR_TRANSACTION;  
+                    error_pkt_type_next   = PKT_LINK;
+                end
             end
             else
             begin
@@ -194,7 +251,11 @@ always_comb begin
         end
         end
 
-        LINK_OK: next_state = DATA_SCAN;
+        LINK_OK:
+        begin
+        next_state = DATA_SCAN;
+        data_active = 'b0;
+        end 
 
         DATA_SCAN: 
         begin
@@ -203,14 +264,36 @@ always_comb begin
             if (i_control_unit_fsm_pkt_start)
             begin
                 if (i_control_unit_fsm_pkt_type == PKT_DATA &&!i_control_unit_fsm_pkt_error)
+                begin
                 next_state = DATA_SCAN ;
+                data_active ='b1;
+                end
+                else if ((i_control_unit_fsm_pkt_type == PKT_CONFIG)) //new configration packet 
+                    begin
+                    if(i_control_unit_fsm_header_valid &&
+                        !i_control_unit_fsm_pkt_error)
+                        begin
+                        next_state = CFG_WR;
+                        o_control_unit_fsm_config_address_counter = 1'b1;
+                        write_configration_en = 1'b1;
+                        o_control_unit_fsm_new_config_pkt = 1'b1;
+                        end
+                    end
                 else 
+                begin
                 next_state= ERROR;
+                error_type_next       = ERR_TRANSACTION;
+                error_pkt_type_next   = i_control_unit_fsm_pkt_type;
+                end 
             end 
-            else 
+            else if (data_active ==1'b1)
             begin
                 next_state = DATA_BODY;
             end
+            else 
+            begin
+                next_state = DATA_SCAN ;
+            end 
         end
         else 
         begin
@@ -220,14 +303,7 @@ always_comb begin
 
         DATA_BODY:
         begin
-            if(pkt_end_reg)
-            begin
-                next_state = IDLE;
-            end
-            else 
-            begin
-                next_state = DATA_SCAN;
-            end 
+        next_state = DATA_SCAN ;
         end
         ERROR: //popping the bad tlp not store or use this data till end =1
         begin
@@ -266,7 +342,7 @@ always_ff @(posedge i_control_unit_fsm_clk or negedge i_control_unit_fsm_rst_n) 
             i_control_unit_fsm_pkt_start &&
             o_control_unit_fsm_first_cfg_tlp&&
             i_control_unit_fsm_pkt_type == PKT_CONFIG &&
-            i_control_unit_fsm_header_valid)
+            i_control_unit_fsm_header_valid || o_control_unit_fsm_new_config_pkt)
             begin
             o_control_unit_fsm_first_cfg_tlp <= 1'b0;
             device_cnt_rem <= i_control_unit_fsm_device_count;
@@ -285,6 +361,21 @@ always_ff @(posedge i_control_unit_fsm_clk or negedge i_control_unit_fsm_rst_n) 
         pkt_end_reg <= 1'b0;
     else if (i_control_unit_fsm_flit_decoder_cu_valid) // i edit here for error handle current_state == CFG_SCAN && 
         pkt_end_reg <= i_control_unit_fsm_pkt_end;
+end
+
+always_ff @(posedge i_control_unit_fsm_clk or negedge i_control_unit_fsm_rst_n) begin
+    if (!i_control_unit_fsm_rst_n) begin
+        error_type_reg   <= ERR_NONE;
+        err_pkt_type_reg <= 2'b00;
+    end
+    else if (next_state == ERROR && current_state != ERROR) begin
+        error_type_reg   <= error_type_next;
+        err_pkt_type_reg <= error_pkt_type_next;
+    end
+    else if (current_state == ERROR && next_state == IDLE) begin
+        error_type_reg   <= ERR_NONE;
+        err_pkt_type_reg <= 2'b00;
+    end
 end
 
 endmodule

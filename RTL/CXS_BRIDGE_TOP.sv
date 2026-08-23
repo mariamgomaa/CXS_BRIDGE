@@ -18,6 +18,7 @@ module CXS_SYSTEM_TOP #(
     parameter int ADDR_W                = 8,
     parameter int DATA_W                = 8,
 
+
     //--------------------------------------------------
     // Derived Parameters
     //--------------------------------------------------
@@ -27,6 +28,7 @@ module CXS_SYSTEM_TOP #(
     parameter int PAYLOAD_INFO_W        = FIFO_WIDTH/2,
     parameter int ENCRYPTED_W           = 2 * DATA_W,
     parameter int CDM_DATA_W            = ENCRYPTED_W + 1
+    
 )(
     //--------------------------------------------------
     // RX CXS Clock Domain
@@ -56,10 +58,10 @@ module CXS_SYSTEM_TOP #(
 
     output logic                         o_cdm_write_done,
     output logic                         o_cdm_write_error,
-    output logic                         o_pkt_error,
     output logic                         o_status_valid,
 
-    output logic                         o_cdm_read_error
+    output logic [1:0]  o_status_pkt_type,   // which pkt_type this status refers to ass error
+    output logic [1:0]  o_status_error_type 
 );
 
 
@@ -132,6 +134,10 @@ module CXS_SYSTEM_TOP #(
 
     logic                  cdm_rd_en;
     logic [ADDR_W-1:0]     cdm_rd_address;
+
+    logic [7:0]   device_count; 
+    logic [ADDR_W-1 : 0]atu_address ;
+    logic atu_valid;
 
 
     //====================================================
@@ -277,8 +283,6 @@ module CXS_SYSTEM_TOP #(
         .o_control_unit_payload_valid
             (payload_valid),
 
-        .o_control_unit_error
-        (o_pkt_error),
 
         .o_control_unit_status_valid
             (o_status_valid),
@@ -314,11 +318,29 @@ module CXS_SYSTEM_TOP #(
             (enc_mode),
 
         .o_control_unit_parity_mode
-            (parity_mode)
+            (parity_mode),
+
+        .o_control_unit_device_count
+        (device_count),
+
+        .o_control_unit_status_pkt_type(o_status_pkt_type),
+        .o_control_unit_status_error_type(o_status_error_type)
     );
+address_translation_unit #(
+    .ADD_W ( ADDR_W),
+    .LOGICAL_ADD_W (ADDR_W)
+)
+u_address_translation_unit
+(
 
+    .i_atu_mode(addr_mode),      // 0 = Limit Mode (future work), 1 = Region Mode
+    .i_atu_address(payload_address),
+    .i_atu_valid(payload_valid),
+    .i_base_address(device_count),  // from device count: base = device_count + 1
 
-
+    .o_atu_address(atu_address),
+    .o_atu_valid(atu_valid)
+);
     encryption_unit #(
         .DATA_WIDTH (DATA_W)
     ) u_encryption_unit (
@@ -360,6 +382,7 @@ module CXS_SYSTEM_TOP #(
         .o_parity_unit_parity_done
             (parity_done)
     );
+    
 
 
     always_comb begin
@@ -382,7 +405,7 @@ module CXS_SYSTEM_TOP #(
             cdm_addr_valid = 1'b1;
             cdm_data_valid = 1'b1;
 
-            cdm_wr_address = config_address;
+            cdm_wr_address = config_address ;
 
             // Zero-extend configuration data to CDM width
             cdm_wr_data =
@@ -393,13 +416,13 @@ module CXS_SYSTEM_TOP #(
         //------------------------------------------------
         // Normal Processed Payload Write
         //------------------------------------------------
-        else if (parity_done) begin
+        else if (parity_done&&atu_valid) begin
 
             cdm_wr_en      = 1'b1;
             cdm_addr_valid = 1'b1;
             cdm_data_valid = 1'b1;
 
-            cdm_wr_address = payload_address;
+            cdm_wr_address = atu_address;
             cdm_wr_data    = parity_data;
 
         end
@@ -409,12 +432,12 @@ module CXS_SYSTEM_TOP #(
 
 
     assign cdm_rd_en      = rd_config_en;
-    assign cdm_rd_address = payload_address;
+    assign cdm_rd_address = (rd_config_en) ? 'b0 : payload_address;
 
 
     central_data_memory #(
         .DATA_WIDTH (CDM_DATA_W),
-        .ADDR_WIDTH (ADDR_W),
+        .LOGICAL_ADD_W (DATA_W),
         .DEPTH      (512)
     ) u_central_data_memory (
 
@@ -446,8 +469,7 @@ module CXS_SYSTEM_TOP #(
         .o_cdm_rd_valid     (o_cdm_rd_valid),
 
         .o_cdm_write_done   (o_cdm_write_done),
-        .o_cdm_write_error  (o_cdm_write_error),
-        .o_cdm_read_error   (o_cdm_read_error)
+        .o_cdm_write_error  (o_cdm_write_error)
     );
 
 

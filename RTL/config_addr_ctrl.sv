@@ -10,6 +10,7 @@ module config_addr_ctrl #(
     input  logic              i_control_unit_rd_fifo_en,
     input  logic              i_config_addr_ctrl_pkt_start,
     input  logic [1:0]        i_config_addr_ctrl_pkt_type,
+    input  logic              i_config_addr_ctrl_new_config_pkt,
 
     // Address output
     output logic [ADDR_W-1:0] o_config_addr_ctrl_config_addr
@@ -27,7 +28,8 @@ module config_addr_ctrl #(
         end
 
         // First word of configuration packet
-        else if(i_config_addr_ctrl_pkt_start && (i_config_addr_ctrl_pkt_type == CONFIG_PKT)&&i_config_addr_ctrl_first_cfg_tlp)
+        else if(i_config_addr_ctrl_pkt_start && (i_config_addr_ctrl_pkt_type == CONFIG_PKT)
+        &&i_config_addr_ctrl_first_cfg_tlp ||i_config_addr_ctrl_new_config_pkt)
         begin
             config_addr_cnt <= '0;
         end

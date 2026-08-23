@@ -27,7 +27,6 @@ module control_unit #(
     output logic                  o_control_unit_config_we,
     output logic                  o_control_unit_payload_valid,
     output logic                  o_control_unit_status_valid,
-    output logic                  o_control_unit_error,
     output logic                  o_control_unit_rd_config_en,
 
     // Datapath
@@ -39,7 +38,10 @@ module control_unit #(
     // Configuration
     output logic                  o_control_unit_addr_mode,
     output logic [2:0]            o_control_unit_enc_mode,
-    output logic [1:0]            o_control_unit_parity_mode
+    output logic [1:0]            o_control_unit_parity_mode,
+    output logic [7:0]            o_control_unit_device_count,
+    output logic [1:0]  o_control_unit_status_pkt_type,   // which pkt_type this status refers to ass error
+    output logic [1:0]  o_control_unit_status_error_type 
 );
 
     //----------------------------------------------------
@@ -76,6 +78,7 @@ module control_unit #(
     //address internal wire 
     logic first_cfg_tlp;
     logic config_address_counter;
+    logic new_config_pkt;
     //----------------------------------------------------
     // Header Decoder Signals
     //----------------------------------------------------
@@ -150,8 +153,13 @@ module control_unit #(
         .o_control_unit_fsm_config_we    (o_control_unit_config_we),
         .o_control_unit_fsm_payload_valid(o_control_unit_payload_valid),
         .o_control_unit_fsm_first_cfg_tlp(first_cfg_tlp),
-        .o_control_unit_fsm_error(o_control_unit_error),
-        .o_control_unit_fsm_status_valid (o_control_unit_status_valid)
+        .o_control_unit_fsm_status_valid (o_control_unit_status_valid),
+
+        .o_control_unit_fsm_status_pkt_type(o_control_unit_status_pkt_type),
+        .o_control_unit_fsm_status_error_type(o_control_unit_status_error_type),
+        .o_control_unit_fsm_new_config_pkt(new_config_pkt)
+
+
     );
 
 
@@ -165,22 +173,40 @@ module control_unit #(
     .i_config_addr_ctrl_pkt_start   (pkt_start),
     .i_config_addr_ctrl_pkt_type    (pkt_type),
     .i_config_addr_ctrl_config_address_counter (config_address_counter),
-
+    .i_config_addr_ctrl_new_config_pkt (new_config_pkt),
     .o_config_addr_ctrl_config_addr (o_control_unit_config_address)
 );
     //----------------------------------------------------
     // Datapath
     //----------------------------------------------------
-
-    assign o_control_unit_address = payload_reg[15:8];
-    assign o_control_unit_data    = payload_reg[7:0];
-
+    always_comb begin
+        if (o_control_unit_payload_valid)
+        begin
+    o_control_unit_address = payload_reg[15:8];
+    o_control_unit_data    = payload_reg[7:0];
     //----------------------------------------------------
     // Configuration outputs
     //----------------------------------------------------
-    assign o_control_unit_config_data = payload_reg ;
-    assign o_control_unit_addr_mode   = i_control_unit_config_data[15];
-    assign o_control_unit_enc_mode    = i_control_unit_config_data[6:4];
-    assign o_control_unit_parity_mode = i_control_unit_config_data[3:2];
+    o_control_unit_addr_mode   = i_control_unit_config_data[15];
+    o_control_unit_enc_mode    = i_control_unit_config_data[6:4];
+    o_control_unit_parity_mode = i_control_unit_config_data[3:2];
+    o_control_unit_device_count = i_control_unit_config_data[14:7];
+        end
+    else 
+    begin
+    o_control_unit_address = 'b0;
+    o_control_unit_data    = 'b0;
+    //----------------------------------------------------
+    // Configuration outputs
+    //----------------------------------------------------
+    o_control_unit_addr_mode   = 'b0;
+    o_control_unit_enc_mode    = 'b0;
+    o_control_unit_parity_mode = 'b0;
+    o_control_unit_device_count = 'b0;
+    end
+    end
+
+
+    assign o_control_unit_config_data = (o_control_unit_config_we) ? payload_reg : 'b0 ;
 
 endmodule
