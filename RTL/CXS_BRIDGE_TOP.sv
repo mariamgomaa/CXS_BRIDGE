@@ -31,16 +31,20 @@ module CXS_SYSTEM_TOP #(
     
 )(
     //--------------------------------------------------
-    // RX CXS Clock Domain
+    // RX CXS INTERFACE
     //--------------------------------------------------
-    input logic                         i_cxs_rx_clk,
-    input logic                         i_cxs_rx_rst_n,
+    input logic                         i_cxs_clk,
+    input logic                         i_cxs_rst_n,
     input logic [CXSDATAFLITWIDTH-1:0]  i_cxsdata,
     input logic [CNTL_W-1:0]            i_cxscntl,
     input logic                         i_cxsvalid,
     input logic                         i_cxsactivereq,
     input logic                         i_cxscrdrtn,
-
+    //-----------------------------------------------------
+    // TX CXS INTERFACE  
+    //---------------------------------------------------
+    input logic                        i_cxs_cxscrdgnt,
+    input logic                        i_cxs_cxsactiveack,
     //--------------------------------------------------
     // FIFO Read / Processing Clock Domain
     //--------------------------------------------------
@@ -53,22 +57,21 @@ module CXS_SYSTEM_TOP #(
     output logic                         o_cxscrdgnt,
     output logic                         o_cxsactiveack,
 
-    output logic                         o_cdm_rd_valid,
-    output logic [CDM_DATA_W-1:0]       o_cdm_rd_data,
-
-    output logic                         o_cdm_write_done,
-    output logic                         o_cdm_write_error,
-    output logic                         o_status_valid,
-
-    output logic [1:0]  o_status_pkt_type,   // which pkt_type this status refers to ass error
-    output logic [1:0]  o_status_error_type 
+    output logic                                o_CXSVALID,
+    output logic[CXSMAXPAYLOADPERFLIT-1 : 0]    o_CXSDATA,
+    output logic[CNTL_W-1 : 0 ]                 o_CXSCNTL,
+    output logic                                o_CXSACTIVEREQ
 );
 
 
     //====================================================
     // Internal Signals
     //====================================================
-
+    //---------------------------------------------
+    // internal signals for tx interfce and control unit
+    logic                         status_valid;
+    logic [1:0]  status_pkt_type;   
+    logic [1:0]  status_error_type ;
     //--------------------------------------------------
     // CXS RX TOP --> Async FIFO
     //--------------------------------------------------
@@ -135,43 +138,64 @@ module CXS_SYSTEM_TOP #(
     logic                  cdm_rd_en;
     logic [ADDR_W-1:0]     cdm_rd_address;
 
+    logic                        cdm_rd_valid,
+    logic [CDM_DATA_W-1:0]       cdm_rd_data,
+
+
     logic [7:0]   device_count; 
     logic [ADDR_W-1 : 0]atu_address ;
     logic atu_valid;
-
-
     //====================================================
-    // 1. CXS RX TOP
+    //CXS  INTERFACE TOP
     //====================================================
+        // CXS INTERFACE INSTANTIATION 
 
-    CXS_RX_TOP #(
-        .CXSMAXPAYLOADPERFLIT (CXSMAXPAYLOADPERFLIT),
-        .CXSDATAFLITWIDTH     (CXSDATAFLITWIDTH),
-        .CNTL_W                (CNTL_W),
-        .FIFO_DEPTH            (FIFO_DEPTH),
-        .MAX_CREDITS           (MAX_CREDITS),
-        .CREDIT_W              (CREDIT_W),
-        .FIFO_WIDTH            (FIFO_WIDTH)
-    ) u_cxs_rx_top (
+    CXS_TOP #(
+    //parameter for reciever and decoder 
+    .CXSMAXPAYLOADPERFLIT (CXSMAXPAYLOADPERFLIT),
+    .CXSDATAFLITWIDTH (CXSDATAFLITWIDTH),
+    .CNTL_W (CNTL_W),
+    //parameter for credit generator 
+    .FIFO_DEPTH (FIFO_DEPTH),
+    .MAX_CREDITS(MAX_CREDITS),
+    .CREDIT_W(CREDIT_W),
+    .FIFO_WIDTH (FIFO_WIDTH)
 
-        .i_CXS_RX_TOP_CLK          (i_cxs_rx_clk),
-        .i_CXS_RX_TOP_rst_n        (i_cxs_rx_rst_n),
+) 
+u_CXS_TOP
+(
+    .i_CXS_TOP_CLK(i_cxs_clk),
+    .i_CXS_TOP_rst_n(i_cxs_rst_n),
+    // CXS RECIEVER INTERFACE 
+    .i_CXS_TOP_CXSDATA(i_cxsdata) ,
+    .i_CXS_TOP_CXSCNTL(i_cxscntl),
+    .i_CXS_TOP_CXSVALID(i_cxsvalid),
+    .i_CXS_TOP_CXSACTIVEREQ(i_cxsactivereq),
+    .i_CXS_TOP_CXSCRDRTN(i_cxscrdrtn),
+    .i_CXS_TOP_buf_release(fifo_buf_release),  //from asynchronous fifo 
 
-        .i_CXS_RX_TOP_CXSDATA      (i_cxsdata),
-        .i_CXS_RX_TOP_CXSCNTL      (i_cxscntl),
-        .i_CXS_RX_TOP_CXSVALID     (i_cxsvalid),
-        .i_CXS_RX_TOP_CXSACTIVEREQ (i_cxsactivereq),
-        .i_CXS_RX_TOP_CXSCRDRTN    (i_cxscrdrtn),
 
-        // Credit update from Async FIFO
-        .i_CXS_RX_TOP_buf_release  (fifo_buf_release),
+    .o_CXS_TOP_CXSCRDGNT(o_cxscrdgnt),
+    .o_CXS_TOP_CXSACTIVEACK(o_cxsactiveack),
+    .o_CXS_TOP_VALID(rx_valid),
+    .o_CXS_TOP_DATA(rx_data),
 
-        .o_CXS_RX_TOP_CXSCRDGNT    (o_cxscrdgnt),
-        .o_CXS_RX_TOP_CXSACTIVEACK (o_cxsactiveack),
+    // CXS TRANSMITTER INTERFACE 
+    // status information to send (e.g. from control_unit)
+    .i_CXS_TOP_status_valid(status_valid),
+    .i_CXS_TOP_status_pkt_type(status_pkt_type),
+    .i_CXS_TOP_status_error_type(status_error_type),
 
-        .o_CXS_RX_TOP_VALID        (rx_valid),
-        .o_CXS_RX_TOP_DATA         (rx_data)
-    );
+    // CXS link inputs from the receiver
+    .i_CXS_TOP_CXSCRDGNT(i_cxs_cxscrdgnt),
+    .i_CXS_TOP_CXSACTIVEACK(i_cxs_cxsactiveack),
+
+    // CXS link outputs to the receiver
+    .o_CXS_TOP_CXSVALID(o_CXSVALID),
+    .o_CXS_TOP_CXSDATA(o_CXSDATA),
+    .o_CXS_TOP_CXSCNTL(o_CXSCNTL),
+    .o_CXS_TOP_CXSACTIVEREQ(o_CXSACTIVEREQ)
+);
 
 
     assign fifo_wr_en = rx_valid && !fifo_full;
@@ -184,8 +208,8 @@ module CXS_SYSTEM_TOP #(
         //------------------------------------------------
         // Write Domain
         //------------------------------------------------
-        .i_Asynch_FIFO_wr_clk  (i_cxs_rx_clk),
-        .i_Asynch_FIFO_wr_rstn (i_cxs_rx_rst_n),
+        .i_Asynch_FIFO_wr_clk  (i_cxs_clk),
+        .i_Asynch_FIFO_wr_rstn (i_cxs_rst_n),
 
         .i_Asynch_FIFO_data_in (rx_data),
         .i_Asynch_FIFO_wr_en   (fifo_wr_en),
@@ -266,9 +290,9 @@ module CXS_SYSTEM_TOP #(
         //------------------------------------------------
         // CDM Configuration Read Interface
         //------------------------------------------------
-        .i_control_unit_config_done(o_cdm_rd_valid),
+        .i_control_unit_config_done(cdm_rd_valid),
         .i_control_unit_config_data(
-            o_cdm_rd_data[PAYLOAD_W-1:0]
+            cdm_rd_data[PAYLOAD_W-1:0]
         ),
 
         //------------------------------------------------
@@ -285,7 +309,7 @@ module CXS_SYSTEM_TOP #(
 
 
         .o_control_unit_status_valid
-            (o_status_valid),
+            (status_valid),
 
         .o_control_unit_rd_config_en
             (rd_config_en),
@@ -323,8 +347,8 @@ module CXS_SYSTEM_TOP #(
         .o_control_unit_device_count
         (device_count),
 
-        .o_control_unit_status_pkt_type(o_status_pkt_type),
-        .o_control_unit_status_error_type(o_status_error_type)
+        .o_control_unit_status_pkt_type(status_pkt_type),
+        .o_control_unit_status_error_type(status_error_type)
     );
 address_translation_unit #(
     .ADD_W ( ADDR_W),
@@ -465,11 +489,8 @@ u_address_translation_unit
         //------------------------------------------------
         // Outputs
         //------------------------------------------------
-        .o_cdm_rd_data      (o_cdm_rd_data),
-        .o_cdm_rd_valid     (o_cdm_rd_valid),
-
-        .o_cdm_write_done   (o_cdm_write_done),
-        .o_cdm_write_error  (o_cdm_write_error)
+        .o_cdm_rd_data      (cdm_rd_data),
+        .o_cdm_rd_valid     (cdm_rd_valid)
     );
 
 
