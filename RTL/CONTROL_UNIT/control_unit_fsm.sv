@@ -62,8 +62,8 @@ logic pkt_end_reg;
     error_type_t error_type_reg;
     logic [1:0]  err_pkt_type_reg;
     logic data_active;
-
-
+// ------
+    logic [1:0] header_num;
 
     //========================
     // Moore output logic
@@ -336,6 +336,7 @@ always_ff @(posedge i_control_unit_fsm_clk or negedge i_control_unit_fsm_rst_n) 
     begin
         o_control_unit_fsm_first_cfg_tlp  <= 1'b1;
         device_cnt_rem <= 'b1;
+        header_num <= 'b0;
     end
     // Load from the first configuration header
     else if (current_state == CFG_SCAN &&
@@ -346,10 +347,20 @@ always_ff @(posedge i_control_unit_fsm_clk or negedge i_control_unit_fsm_rst_n) 
             begin
             o_control_unit_fsm_first_cfg_tlp <= 1'b0;
             device_cnt_rem <= i_control_unit_fsm_device_count;
+            header_num <= 'b0;
             end
     // One complete device region stored
     else if (write_configration_en && !i_control_unit_fsm_pkt_start && device_cnt_rem != 0)
+    begin
+        if (header_num == 'b0)
+        begin
+        header_num <= header_num + 1;
+        end
+        else 
+        begin
         device_cnt_rem <= device_cnt_rem - 1'b1;
+        end
+    end
 end
 
 assign config_count_done = (device_cnt_rem == 0);

@@ -114,16 +114,18 @@ module CXS_Credit_Generator #(
         begin
             fifo_free_reg          <= FIFO_DEPTH;
             outstanding_credit_reg <= 0;
-            o_CXS_Credit_Generator_cxscrdgnt <= 0;
+            //o_CXS_Credit_Generator_cxscrdgnt <= 0;
             o_CXS_Credit_Generator_return_all_credit <= 0;
         end
         else
         begin
             fifo_free_reg          <= fifo_free;
             outstanding_credit_reg <= outstanding_credit;
-            o_CXS_Credit_Generator_cxscrdgnt <= grant_enable;
+            //o_CXS_Credit_Generator_cxscrdgnt <= grant_enable; // commented as credit grant and ack can asserted in same cycle 
             o_CXS_Credit_Generator_return_all_credit <= return_all_credit;
         end
     end
+    //compinationally output the credit grant at same cycle of ack/////////////////////////////////
+    assign o_CXS_Credit_Generator_cxscrdgnt= grant_enable;
 endmodule
 

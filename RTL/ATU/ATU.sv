@@ -1,6 +1,6 @@
 module address_translation_unit #(
     parameter int ADD_W         = 8,
-    parameter int LOGICAL_ADD_W = 8
+    parameter int LOGICAL_ADD_W = 9
 )(
 
     input  logic                      i_atu_mode,      // 0 = Limit Mode (future work), 1 = Region Mode
@@ -11,7 +11,7 @@ module address_translation_unit #(
     output logic [LOGICAL_ADD_W-1:0]  o_atu_address,
     output logic                      o_atu_valid
 );
-
+    localparam [LOGICAL_ADD_W-1:0] DEVICE_REGION = 9'd257;
 
     //========================================================
     // Translation
@@ -24,7 +24,7 @@ module address_translation_unit #(
 
             // Region Mode: address = incoming address + stored base
             if (i_atu_mode) begin
-                o_atu_address = i_atu_address + i_base_address + 1 ; // 5 (end of configration packet) + 1 + 0 = 5
+                o_atu_address = {1'b0,i_atu_address} + {1'b0,i_base_address} + DEVICE_REGION ; // base address configrable
                 o_atu_valid   = 1'b1;
             end
 

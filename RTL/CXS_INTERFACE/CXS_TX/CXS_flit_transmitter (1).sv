@@ -23,7 +23,6 @@ module CXS_flit_transmitter #(
     output logic [CXSMAXPAYLOADPERFLIT-1:0]   o_CXS_flit_transmitter_end_field,
     output logic [CXSMAXPAYLOADPERFLIT-1:0]   o_CXS_flit_transmitter_end_error,
 
-    output logic                              o_CXS_flit_transmitter_pkt_accepted, // pulses when formatter input has been consumed
     output logic                              o_CXS_flit_transmitter_busy          // packet queued or arriving, used to drive link activation
 );
 
@@ -70,8 +69,6 @@ module CXS_flit_transmitter #(
             o_CXS_flit_transmitter_start_field <= '0;
             o_CXS_flit_transmitter_end_field   <= '0;
             o_CXS_flit_transmitter_end_error   <= '0;
-            o_CXS_flit_transmitter_pkt_accepted<= 1'b0;
-
             pending_reg       <= 1'b0;
             pending_data_reg  <= '0;
             pending_start_reg <= '0;
@@ -79,14 +76,12 @@ module CXS_flit_transmitter #(
             pending_error_reg <= '0;
         end
         else begin
-            o_CXS_flit_transmitter_pkt_accepted <= 1'b0;
             if (send_now) begin
                 o_CXS_flit_transmitter_CXSVALID    <= 1'b1;
                 o_CXS_flit_transmitter_CXSDATA     <= send_data;
                 o_CXS_flit_transmitter_start_field <= send_start;
                 o_CXS_flit_transmitter_end_field   <= send_end;
                 o_CXS_flit_transmitter_end_error   <= send_error;
-                o_CXS_flit_transmitter_pkt_accepted<= 1'b1;
                 pending_reg <= 1'b0;
             end
             else begin

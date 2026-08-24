@@ -34,7 +34,10 @@ module CXS_Link_Control_TX
         begin
             o_CXS_Link_Control_TX_CXSACTIVEREQ = 1'b1;
             if (i_CXS_Link_Control_TX_CXSACTIVEACK) //waiting for ack
+            begin
                 next_state = RUN;
+                o_CXS_Link_Control_TX_valid_sending = 1'b1;
+            end 
             else
                 next_state = ACTIVATE;
         end

@@ -38,9 +38,7 @@ module encryption_unit  #(
             //----------------------------------------
             // Special Case
             //----------------------------------------
-            if ((ones_cnt == zeros_cnt) ||
-                ((ones_cnt % 2 == 0) && (zeros_cnt % 2 == 0))) begin
-
+            if ((ones_cnt == zeros_cnt)) begin
                 for (i = 0; i < 8; i = i + 1) begin
                     if (i_encryption_unit_payload_data[i] == 1'b0)
                         o_encryption_unit_encrypted_data[2*i +: 2] = 2'b01;

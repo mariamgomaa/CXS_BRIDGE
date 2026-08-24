@@ -23,8 +23,8 @@ module CXS_SYSTEM_TOP_TB;
     //--------------------------------------------------
     // Clock and Reset
     //--------------------------------------------------
-    logic i_cxs_rx_clk;
-    logic i_cxs_rx_rst_n;
+    logic i_cxs_clk;
+    logic i_cxs_rst_n;
 
     logic i_system_clk;
     logic i_system_rst_n;
@@ -39,6 +39,8 @@ module CXS_SYSTEM_TOP_TB;
     logic i_cxsvalid;
     logic i_cxsactivereq;
     logic i_cxscrdrtn;
+    logic  i_cxs_cxscrdgnt;
+    logic i_cxs_cxsactiveack;
 
 
     //--------------------------------------------------
@@ -47,15 +49,16 @@ module CXS_SYSTEM_TOP_TB;
     logic                       o_cxscrdgnt;
     logic                       o_cxsactiveack;
 
-    logic                       o_cdm_rd_valid;
-    logic [CDM_DATA_W-1:0]      o_cdm_rd_data;
 
-    logic                       o_cdm_write_done;
-    logic                       o_cdm_write_error;
-    logic  [1:0]               o_status_pkt_type;
-    logic  [1:0]               o_status_error_type;
-    logic                      o_status_valid;
+    logic                       o_CXSVALID;
+    logic                       o_CXSACTIVEREQ;
+    logic[CXSDATAFLITWIDTH-1:0] o_CXSDATA;
+    logic[CNTL_W-1:0]           o_CXSCNTL;
 
+    logic                     i_app_rd_en;
+    logic [ADDR_W-1:0]        i_app_rd_address;
+    logic [CDM_DATA_W-1:0]    o_app_rd_data;
+    logic                     o_app_rd_valid;
 
 
     //--------------------------------------------------
@@ -75,8 +78,8 @@ module CXS_SYSTEM_TOP_TB;
         //--------------------------------------------------
         // CXS RX Clock Domain
         //--------------------------------------------------
-        .i_cxs_rx_clk       (i_cxs_rx_clk),
-        .i_cxs_rx_rst_n     (i_cxs_rx_rst_n),
+        .i_cxs_clk       (i_cxs_clk),
+        .i_cxs_rst_n     (i_cxs_rst_n),
 
         //--------------------------------------------------
         // CXS Interface
@@ -86,12 +89,16 @@ module CXS_SYSTEM_TOP_TB;
         .i_cxsvalid         (i_cxsvalid),
         .i_cxsactivereq     (i_cxsactivereq),
         .i_cxscrdrtn        (i_cxscrdrtn),
-
+        .i_cxs_cxsactiveack  (i_cxs_cxsactiveack),
+        .i_cxs_cxscrdgnt     (i_cxs_cxscrdgnt),
         //--------------------------------------------------
         // System Clock Domain
         //--------------------------------------------------
         .i_system_clk       (i_system_clk),
         .i_system_rst_n     (i_system_rst_n),
+        .i_app_rd_en(i_app_rd_en),
+        .i_app_rd_address(i_app_rd_address),
+
 
         //--------------------------------------------------
         // Outputs
@@ -99,14 +106,13 @@ module CXS_SYSTEM_TOP_TB;
         .o_cxscrdgnt        (o_cxscrdgnt),
         .o_cxsactiveack     (o_cxsactiveack),
 
-        .o_cdm_rd_valid     (o_cdm_rd_valid),
-        .o_cdm_rd_data      (o_cdm_rd_data),
+        .o_CXSVALID     (o_CXSVALID),
+        .o_CXSDATA      (o_CXSDATA),
 
-        .o_cdm_write_done   (o_cdm_write_done),
-        .o_cdm_write_error  (o_cdm_write_error),
-        .o_status_valid      (o_status_valid),
-        .o_status_pkt_type   (o_status_pkt_type),
-        .o_status_error_type(o_status_error_type)
+        .o_CXSCNTL   (o_CXSCNTL),
+        .o_CXSACTIVEREQ  (o_CXSACTIVEREQ),
+        .o_app_rd_data(o_app_rd_data),
+        .o_app_rd_valid(o_app_rd_valid)
     );
 
 
@@ -115,8 +121,8 @@ module CXS_SYSTEM_TOP_TB;
     //==================================================
 
     // CXS Clock
-    initial i_cxs_rx_clk = 1'b0;
-    always #5 i_cxs_rx_clk = ~i_cxs_rx_clk;
+    initial i_cxs_clk = 1'b0;
+    always #5 i_cxs_clk = ~i_cxs_clk;
 
 
     // System Clock
@@ -134,11 +140,11 @@ initial begin
     end
 
     $fmonitor(report_fd,
-        "T=%0t | ACT_REQ=%b ACT_ACK=%b | VALID=%b DATA=%h CNTL=%b | CRDGNT=%b | CDM_WR_DONE=%b CDM_RD_VALID=%b \n || FSM: cur=%s nxt=%s | BUF_REL=%b ||\n CU_IN: addr=%h data=%h cfg_addr=%h cfg_data=%h | CU_EN: rd_fifo=%b rd_cfg=%b cfg_we=%b payload_v=%b status_v=%b | MODE: addr_mode=%b enc_mode=%b parity_mode=%b \n",
+        "T=%0t | ACT_REQ=%b ACT_ACK=%b | VALID=%b DATA=%h CNTL=%b | CRDGNT=%b \n || FSM: cur=%s nxt=%s | BUF_REL=%b ||\n CU_IN: addr=%h data=%h cfg_addr=%h cfg_data=%h | CU_EN: rd_fifo=%b rd_cfg=%b cfg_we=%b payload_v=%b status_v=%b | MODE: addr_mode=%b enc_mode=%b parity_mode=%b \n",
         $time,
         i_cxsactivereq, o_cxsactiveack,
         i_cxsvalid, i_cxsdata, i_cxscntl,
-        o_cxscrdgnt, o_cdm_write_done, o_cdm_rd_valid,
+        o_cxscrdgnt,
         DUT.u_control_unit.u_fsm.current_state.name(),
         DUT.u_control_unit.u_fsm.next_state.name(),
         DUT.u_async_fifo.o_Asynch_FIFO_buf_release,
@@ -169,7 +175,7 @@ end
 
         begin
 
-            i_cxs_rx_rst_n = 1'b0;
+            i_cxs_rst_n = 1'b0;
             i_system_rst_n = 1'b0;
 
             i_cxsdata      = '0;
@@ -178,13 +184,14 @@ end
 
             i_cxsactivereq = 1'b0;
             i_cxscrdrtn    = 1'b0;
+            i_cxs_cxscrdgnt    = 1'b0;
+            i_cxs_cxsactiveack = 1'b0;
+            repeat(3) @(posedge i_cxs_clk);
 
-            repeat(3) @(posedge i_cxs_rx_clk);
-
-            i_cxs_rx_rst_n = 1'b1;
+            i_cxs_rst_n = 1'b1;
             i_system_rst_n = 1'b1;
 
-            @(posedge i_cxs_rx_clk);
+            @(posedge i_cxs_clk);
 
         end
 
@@ -192,13 +199,13 @@ end
 
 
     //==================================================
-    // Activate CXS Link
+    // Activate CXS Link RX
     //==================================================
     task activate_link;
 
         begin
 
-            @(negedge i_cxs_rx_clk);
+            @(negedge i_cxs_clk);
 
             i_cxsactivereq = 1'b1;
 
@@ -206,10 +213,91 @@ end
             wait(o_cxsactiveack == 1'b1);
 
             // Give link controller time to stabilize
-            repeat(2) @(posedge i_cxs_rx_clk);
+            repeat(2) @(posedge i_cxs_clk);
 
         end
 
+    endtask
+
+task activate_tx_link;
+begin
+
+end
+endtask
+
+
+    task automatic rx_activeack_respond(input int delay_cycles = 2);
+        begin
+            wait (o_CXSACTIVEREQ == 1'b1);
+            repeat (delay_cycles) @(posedge i_cxs_clk);
+            i_cxs_cxsactiveack = 1'b1;
+            $display("[%0t] RX MODEL: CXSACTIVEACK asserted", $time);
+        end
+    endtask
+
+    //--------------------------------------------------
+    // One-shot: drop ACK (models receiver deactivating
+    // the link, or simply the response to REQ falling).
+    //--------------------------------------------------
+    task automatic rx_activeack_deassert();
+        begin
+            @(negedge i_cxs_clk);
+            i_cxs_cxsactiveack = 1'b0;
+            $display("[%0t] RX MODEL: CXSACTIVEACK deasserted", $time);
+        end
+    endtask
+
+    //--------------------------------------------------
+    // Grant N credits: one CXSCRDGNT pulse per credit,
+    // with gap_cycles idle cycles between pulses.
+    //--------------------------------------------------
+    task automatic rx_grant_credits(input int num_credits, input int gap_cycles = 1);
+        integer i;
+        begin
+            for (i = 0; i < num_credits; i = i + 1) begin
+                @(negedge i_cxs_clk);
+                i_cxs_cxscrdgnt = 1'b1;
+                @(posedge i_cxs_clk);
+                @(negedge i_cxs_clk);
+                i_cxs_cxscrdgnt = 1'b0;
+                repeat (gap_cycles) @(posedge i_cxs_clk);
+            end
+            $display("[%0t] RX MODEL: granted %0d credit(s)", $time, num_credits);
+        end
+    endtask
+
+    //--------------------------------------------------
+    // Explicitly withhold credits (no grants) for a
+    // fixed number of cycles - useful to test TX stall
+    // behavior when the credit counter hits zero.
+    //--------------------------------------------------
+    task automatic rx_withhold_credits(input int cycles);
+        begin
+            i_cxs_cxscrdgnt = 1'b0;
+            repeat (cycles) @(posedge i_cxs_clk);
+            $display("[%0t] RX MODEL: withheld credits for %0d cycle(s)", $time, cycles);
+        end
+    endtask
+
+
+    task automatic rx_model_run(input int initial_credits = 8);
+        begin
+            fork
+                begin : rx_ack_proc
+                    forever begin
+                        wait (o_CXSACTIVEREQ == 1'b1);
+                        repeat (2) @(posedge i_cxs_clk);
+                        i_cxs_cxsactiveack = 1'b1;
+                        wait (o_CXSACTIVEREQ == 1'b0);
+                        @(negedge i_cxs_clk);
+                        i_cxs_cxsactiveack = 1'b0;
+                    end
+                end
+                begin : rx_credit_proc
+                    rx_grant_credits(initial_credits, 1);
+                end
+            join_none
+        end
     endtask
 
 
@@ -242,7 +330,7 @@ end
 
         begin
 
-            @(negedge i_cxs_rx_clk);
+            @(negedge i_cxs_clk);
 
             i_cxsdata = {
                 payload1,
@@ -262,7 +350,7 @@ end
 
             i_cxsvalid = 1'b1;
 
-            @(posedge i_cxs_rx_clk);
+            @(posedge i_cxs_clk);
 
             i_cxsvalid = 1'b0;
             i_cxsdata  = '0;
@@ -317,9 +405,18 @@ end
 
 
         //--------------------------------------------------
-        // Activate CXS Link
+        // Activate CXS Link (RX direction, as before)
         //--------------------------------------------------
         activate_link();
+        activate_tx_link();
+
+        //--------------------------------------------------
+        // Start the receiver model for the TX path. From
+        // here on, ACTIVEREQ auto-ACKs and there's a pool
+        // of 8 credits available to the transmitter.
+        //--------------------------------------------------
+        rx_model_run(8);
+
         $display ("============================================================================");
         $display("test 1 send wrong configration packet device count error");
         $display ("============================================================================");
@@ -396,9 +493,9 @@ end
                 2'b00       // CONFIG packet
             ),
             //------------------------------------------------
-            // Payload 1 = First Configuration Data
+            // Payload 1 = First Configuration Data that has base address
             //------------------------------------------------
-            16'h1111,
+            16'h000A,//let set base address 10
             //------------------------------------------------
             // Payload 0 Control
             //------------------------------------------------
@@ -416,8 +513,8 @@ end
         // Continue Configuration Data
         //--------------------------------------------------
         send_flit(
+            16'h1111,
             16'h2222,
-            16'h3333,
             1'b0,
             1'b0,
             1'b0,
@@ -429,7 +526,7 @@ end
         // Last Configuration Word in first configration tlp
         //--------------------------------------------------
         send_flit(
-            16'h4444,
+            16'h3333,
             header_form(
                 1'b0,
                 8'd0,
@@ -448,18 +545,18 @@ end
             //------------------------------------------------
             // Configuration Word
             //------------------------------------------------
-            16'hAAAA,
-            16'h0000,
+            16'h4444,
+            16'h5555,
             //------------------------------------------------
             // Header Control
             //------------------------------------------------
             1'b0,
             1'b0,
-            1'b1, //end of
+            1'b0, //end of
             //------------------------------------------------
             // Data Control
             //------------------------------------------------
-            1'b0,
+            1'b1,
             1'b0,
             1'b0
         );
@@ -590,7 +687,7 @@ end
             16'h06FF,// address 0000 0004       data  DD
             header_form(
                 1'b1,
-                8'd2,
+                8'd3,
                 3'b01,
                 2'b01,
                 2'b00
@@ -612,8 +709,8 @@ end
             //------------------------------------------------
             // Configuration Word
             //------------------------------------------------
-            16'h05BB,// address 0000 0002       data  BB
-            16'h06CC,// address 0000 0003       data  CC
+            16'h000A,// base address 10 
+            16'h6666,// 
             //------------------------------------------------
             // Header Control
             //------------------------------------------------
@@ -623,11 +720,42 @@ end
             //------------------------------------------------
             // Data Control
             //------------------------------------------------
+            1'b0,
+            1'b0,
+            1'b0
+        );
+        send_flit(
+            //------------------------------------------------
+            // Configuration Word
+            //------------------------------------------------
+            16'h7777,
+            16'h8888,
+            //------------------------------------------------
+            // Header Control
+            //------------------------------------------------
+            1'b0,
+            1'b0,
+            1'b0, 
+            //------------------------------------------------
+            // Data Control
+            //------------------------------------------------
             1'b1,
             1'b0,
             1'b0
         );
-        
+
+        $display ("============================================================================");
+        $display("test 5 TX starvation: withhold credits then release");
+        $display ("============================================================================");
+        //--------------------------------------------------
+        // Example of directly driving the receiver model
+        // instead of the background rx_model_run() pool:
+        // stall the TX by withholding credits, then grant
+        // a fresh batch and watch the TX resume.
+        //--------------------------------------------------
+        rx_withhold_credits(20);
+        rx_grant_credits(4, 2);
+
          #1000;
         $stop;
 

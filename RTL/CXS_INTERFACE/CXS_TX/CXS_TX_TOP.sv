@@ -66,7 +66,7 @@ module CXS_TX_TOP #(
         .o_CXS_Pkt_Formatter_start             (fmt_start),
         .o_CXS_Pkt_Formatter_end               (fmt_end),
         .o_CXS_Pkt_Formatter_error             (fmt_error),
-        .o_CXS_Pkt_Formatter_pkt_valid         (fmt_pkt_valid),
+        .o_CXS_Pkt_Formatter_pkt_valid         (fmt_pkt_valid)
     );
 
     // TX credit counter module instantiation

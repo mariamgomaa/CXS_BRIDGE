@@ -25,7 +25,7 @@ module CXS_TOP #(
     output logic                         o_CXS_TOP_CXSCRDGNT,
     output logic                         o_CXS_TOP_CXSACTIVEACK,
     output logic                         o_CXS_TOP_VALID,
-    output logic[FIFO_WIDTH-1 : 0]       o_CXS_TOP_DATA
+    output logic[FIFO_WIDTH-1 : 0]       o_CXS_TOP_DATA,
 
     // CXS TRANSMITTER INTERFACE 
     ///////////////////////////////
@@ -69,8 +69,6 @@ CXS_RX_TOP #(
     .i_CXS_RX_TOP_CXSACTIVEREQ(i_CXS_TOP_CXSACTIVEREQ),
     .i_CXS_RX_TOP_CXSCRDRTN(i_CXS_TOP_CXSCRDRTN),
     .i_CXS_RX_TOP_buf_release(i_CXS_TOP_buf_release),  //from asynchronous fifo 
-
-
     .o_CXS_RX_TOP_CXSCRDGNT(o_CXS_TOP_CXSCRDGNT),
     .o_CXS_RX_TOP_CXSACTIVEACK(o_CXS_TOP_CXSACTIVEACK),
     .o_CXS_RX_TOP_VALID(o_CXS_TOP_VALID),
@@ -81,11 +79,11 @@ CXS_RX_TOP #(
     CXS_TX_TOP #(
     // parameters for pkt formatter, cntl encoder
     .CXSMAXPAYLOADPERFLIT(CXSMAXPAYLOADPERFLIT),
-    .CXSDATAFLITWIDTH(CXSMAXPAYLOADPERFLIT),
-    .CNTL_W(CXSMAXPAYLOADPERFLIT),
+    .CXSDATAFLITWIDTH(CXSDATAFLITWIDTH),
+    .CNTL_W(CNTL_W),
     // parameters for credit counter
-    .MAX_CREDITS          (CXSMAXPAYLOADPERFLIT),
-    .CREDIT_W             (CXSMAXPAYLOADPERFLIT)
+    .MAX_CREDITS          (MAX_CREDITS),
+    .CREDIT_W             (CREDIT_W)
 )
     u_CXS_TX_TOP
 (

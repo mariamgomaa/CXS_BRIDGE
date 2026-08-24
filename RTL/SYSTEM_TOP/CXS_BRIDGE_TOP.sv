@@ -16,9 +16,11 @@ module CXS_SYSTEM_TOP #(
     //--------------------------------------------------
     parameter int PAYLOAD_W             = 16,
     parameter int ADDR_W                = 8,
+    parameter int LOGICAL_ADD_W     = 9,
     parameter int DATA_W                = 8,
-
-
+    //DATA SYNCHRONIZER PARAMETER 
+    parameter int NUM_STAGES          =2,
+    parameter  int  BUS_WIDTH          =4,
     //--------------------------------------------------
     // Derived Parameters
     //--------------------------------------------------
@@ -27,7 +29,9 @@ module CXS_SYSTEM_TOP #(
     parameter int CREDIT_W              = $clog2(MAX_CREDITS + 1),
     parameter int PAYLOAD_INFO_W        = FIFO_WIDTH/2,
     parameter int ENCRYPTED_W           = 2 * DATA_W,
-    parameter int CDM_DATA_W            = ENCRYPTED_W + 1
+    parameter int CDM_DATA_W            = ENCRYPTED_W + 1,
+    parameter int CONFIG_DATA_W         = 32,
+    parameter int DEPTH                 = 512
     
 )(
     //--------------------------------------------------
@@ -52,15 +56,22 @@ module CXS_SYSTEM_TOP #(
     input logic                         i_system_rst_n,
 
     //--------------------------------------------------
-    // Outputs
+    // Outputs for cxs interface 
     //--------------------------------------------------
     output logic                         o_cxscrdgnt,
     output logic                         o_cxsactiveack,
 
     output logic                                o_CXSVALID,
-    output logic[CXSMAXPAYLOADPERFLIT-1 : 0]    o_CXSDATA,
+    output logic[CXSDATAFLITWIDTH-1 : 0]    o_CXSDATA,
     output logic[CNTL_W-1 : 0 ]                 o_CXSCNTL,
-    output logic                                o_CXSACTIVEREQ
+    output logic                                o_CXSACTIVEREQ,
+    //---------------------------------------------
+    //cdm interface 
+    //--------------------------------------
+    input  logic                     i_app_rd_en,
+    input  logic [LOGICAL_ADD_W-1:0] i_app_rd_address,
+    output logic [CDM_DATA_W-1:0]    o_app_rd_data,
+    output logic                     o_app_rd_valid
 );
 
 
@@ -72,6 +83,8 @@ module CXS_SYSTEM_TOP #(
     logic                         status_valid;
     logic [1:0]  status_pkt_type;   
     logic [1:0]  status_error_type ;
+    logic [BUS_WIDTH-1:0] synch_status;
+    logic        synch_status_valid;
     //--------------------------------------------------
     // CXS RX TOP --> Async FIFO
     //--------------------------------------------------
@@ -132,19 +145,17 @@ module CXS_SYSTEM_TOP #(
     logic                  cdm_addr_valid;
     logic                  cdm_data_valid;
 
-    logic [ADDR_W-1:0]     cdm_wr_address;
+    logic [LOGICAL_ADD_W-1:0]     cdm_wr_address;
     logic [CDM_DATA_W-1:0] cdm_wr_data;
 
-    logic                  cdm_rd_en;
-    logic [ADDR_W-1:0]     cdm_rd_address;
-
-    logic                        cdm_rd_valid,
-    logic [CDM_DATA_W-1:0]       cdm_rd_data,
+    logic                            cdm_config_rd_en;
+    logic                           cdm_rd_config_valid;
+    logic [CONFIG_DATA_W-1:0]       cdm_rd_config_data;
 
 
-    logic [7:0]   device_count; 
-    logic [ADDR_W-1 : 0]atu_address ;
-    logic atu_valid;
+    logic [7:0]                     base_address;
+    logic [LOGICAL_ADD_W-1 : 0]            atu_address ;
+    logic                           atu_valid;
     //====================================================
     //CXS  INTERFACE TOP
     //====================================================
@@ -182,9 +193,9 @@ u_CXS_TOP
 
     // CXS TRANSMITTER INTERFACE 
     // status information to send (e.g. from control_unit)
-    .i_CXS_TOP_status_valid(status_valid),
-    .i_CXS_TOP_status_pkt_type(status_pkt_type),
-    .i_CXS_TOP_status_error_type(status_error_type),
+    .i_CXS_TOP_status_valid(synch_status_valid),
+    .i_CXS_TOP_status_pkt_type(synch_status[3:2]),
+    .i_CXS_TOP_status_error_type(synch_status[1:0]),
 
     // CXS link inputs from the receiver
     .i_CXS_TOP_CXSCRDGNT(i_cxs_cxscrdgnt),
@@ -199,6 +210,26 @@ u_CXS_TOP
 
 
     assign fifo_wr_en = rx_valid && !fifo_full;
+///////////////////////////////////////////////////////////
+//CDC SOLUTION FROM FAST TO SLOW USING ASYNCH FIFO 
+//DATA SYNCHRONIZER FROM SLOW TO FAST FOR TRANSMITTER 
+//////////////////////////////////////////////////////////////
+DATA_SYNC #(
+    .NUM_STAGES (NUM_STAGES ),
+    .BUS_WIDTH  (BUS_WIDTH) 
+    
+)
+u_DATA_SYNC
+(
+    .i_DATA_SYNC_CLK(i_cxs_clk),
+    .i_DATA_SYNC_RST_n(i_cxs_rst_n),
+    .i_DATA_SYNC_usync_bus({status_pkt_type,status_error_type}),
+    .i_DATA_SYNC_bus_enable(status_valid),
+
+    .o_DATA_SYNC_sync_bus(synch_status),
+    .o_DATA_SYNC_enable_pulse(synch_status_valid)
+
+);
 
     async_fifo #(
         .DEPTH (FIFO_DEPTH),
@@ -233,6 +264,8 @@ u_CXS_TOP
         .o_Asynch_FIFO_buf_release (fifo_buf_release)
     );
 
+
+////////////////////////////////////////////////////////////////////////////
 
     Flit_Decoder #(
         .CXSMAXPAYLOADPERFLIT (CXSMAXPAYLOADPERFLIT),
@@ -272,7 +305,8 @@ u_CXS_TOP
         .PAYLOAD_W (PAYLOAD_W),
         .ADDR_W    (ADDR_W),
         .PAYLOAD_INFO_W(PAYLOAD_INFO_W),
-        .DATA_W    (DATA_W)
+        .DATA_W    (DATA_W),
+        .CONFIG_DATA_W (CONFIG_DATA_W)
     ) u_control_unit (
 
         //------------------------------------------------
@@ -290,9 +324,9 @@ u_CXS_TOP
         //------------------------------------------------
         // CDM Configuration Read Interface
         //------------------------------------------------
-        .i_control_unit_config_done(cdm_rd_valid),
+        .i_control_unit_config_done(cdm_rd_config_valid),
         .i_control_unit_config_data(
-            cdm_rd_data[PAYLOAD_W-1:0]
+            cdm_rd_config_data[CONFIG_DATA_W-1:0]
         ),
 
         //------------------------------------------------
@@ -344,15 +378,15 @@ u_CXS_TOP
         .o_control_unit_parity_mode
             (parity_mode),
 
-        .o_control_unit_device_count
-        (device_count),
+        .o_control_unit_base_address
+        (base_address),
 
         .o_control_unit_status_pkt_type(status_pkt_type),
         .o_control_unit_status_error_type(status_error_type)
     );
 address_translation_unit #(
     .ADD_W ( ADDR_W),
-    .LOGICAL_ADD_W (ADDR_W)
+    .LOGICAL_ADD_W (LOGICAL_ADD_W)
 )
 u_address_translation_unit
 (
@@ -360,8 +394,7 @@ u_address_translation_unit
     .i_atu_mode(addr_mode),      // 0 = Limit Mode (future work), 1 = Region Mode
     .i_atu_address(payload_address),
     .i_atu_valid(payload_valid),
-    .i_base_address(device_count),  // from device count: base = device_count + 1
-
+    .i_base_address(base_address),  
     .o_atu_address(atu_address),
     .o_atu_valid(atu_valid)
 );
@@ -429,7 +462,7 @@ u_address_translation_unit
             cdm_addr_valid = 1'b1;
             cdm_data_valid = 1'b1;
 
-            cdm_wr_address = config_address ;
+            cdm_wr_address = {0,config_address} ;
 
             // Zero-extend configuration data to CDM width
             cdm_wr_data =
@@ -455,14 +488,14 @@ u_address_translation_unit
 
 
 
-    assign cdm_rd_en      = rd_config_en;
-    assign cdm_rd_address = (rd_config_en) ? 'b0 : payload_address;
+    assign cdm_config_rd_en      = rd_config_en;
 
 
     central_data_memory #(
         .DATA_WIDTH (CDM_DATA_W),
-        .LOGICAL_ADD_W (DATA_W),
-        .DEPTH      (512)
+        .LOGICAL_ADD_W (LOGICAL_ADD_W),
+        .DEPTH      (DEPTH),
+        .CONFIG_DATA_W (CONFIG_DATA_W)
     ) u_central_data_memory (
 
         //------------------------------------------------
@@ -481,16 +514,18 @@ u_address_translation_unit
         .i_cdm_wr_en        (cdm_wr_en),
 
         //------------------------------------------------
-        // Read Interface
+        // Read Interface for configration data
         //------------------------------------------------
-        .i_cdm_rd_en        (cdm_rd_en),
-        .i_cdm_rd_address   (cdm_rd_address),
-
+        .i_cdm_cfg_rd_en        (cdm_config_rd_en),
+        .o_cdm_cfg_data      (cdm_rd_config_data),
+        .o_cdm_cfg_valid     (cdm_rd_config_valid),
         //------------------------------------------------
-        // Outputs
+        // Read Interface for application layer
         //------------------------------------------------
-        .o_cdm_rd_data      (cdm_rd_data),
-        .o_cdm_rd_valid     (cdm_rd_valid)
+        .i_cdm_app_rd_en(i_app_rd_en),
+        .i_cdm_app_rd_address(i_app_rd_address),
+        .o_cdm_app_rd_data(o_app_rd_data),
+        .o_cdm_app_rd_valid(o_app_rd_valid)
     );
 
 

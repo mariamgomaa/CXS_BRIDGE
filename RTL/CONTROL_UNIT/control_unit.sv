@@ -1,6 +1,7 @@
 
 module control_unit #(
     parameter int   PAYLOAD_W = 16,
+    parameter int   CONFIG_DATA_W = 32,
     parameter int   ADDR_W    = 8,
     parameter int   DATA_W    = 8,
     parameter int  PAYLOAD_INFO_W=PAYLOAD_W+3
@@ -18,7 +19,7 @@ module control_unit #(
 
     // cdm interface 
     input  logic                  i_control_unit_config_done,
-    input  logic[PAYLOAD_W-1:0]   i_control_unit_config_data,
+    input  logic[CONFIG_DATA_W-1:0]   i_control_unit_config_data,
 
     // FSM outputs
     output logic                  o_control_unit_rd_fifo_en,
@@ -39,7 +40,7 @@ module control_unit #(
     output logic                  o_control_unit_addr_mode,
     output logic [2:0]            o_control_unit_enc_mode,
     output logic [1:0]            o_control_unit_parity_mode,
-    output logic [7:0]            o_control_unit_device_count,
+    output logic [7:0]            o_control_unit_base_address,
     output logic [1:0]  o_control_unit_status_pkt_type,   // which pkt_type this status refers to ass error
     output logic [1:0]  o_control_unit_status_error_type 
 );
@@ -187,10 +188,10 @@ module control_unit #(
     //----------------------------------------------------
     // Configuration outputs
     //----------------------------------------------------
+    o_control_unit_base_address = i_control_unit_config_data[23:16];
     o_control_unit_addr_mode   = i_control_unit_config_data[15];
     o_control_unit_enc_mode    = i_control_unit_config_data[6:4];
     o_control_unit_parity_mode = i_control_unit_config_data[3:2];
-    o_control_unit_device_count = i_control_unit_config_data[14:7];
         end
     else 
     begin
@@ -199,10 +200,10 @@ module control_unit #(
     //----------------------------------------------------
     // Configuration outputs
     //----------------------------------------------------
+    o_control_unit_base_address = 'b0;
     o_control_unit_addr_mode   = 'b0;
     o_control_unit_enc_mode    = 'b0;
     o_control_unit_parity_mode = 'b0;
-    o_control_unit_device_count = 'b0;
     end
     end
 
