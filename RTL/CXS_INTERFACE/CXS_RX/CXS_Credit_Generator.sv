@@ -1,5 +1,4 @@
 module CXS_Credit_Generator #(
-    parameter int FIFO_DEPTH = 16,
     parameter int MAX_CREDITS = 15,
     parameter int CREDIT_W = $clog2(MAX_CREDITS+1)
 )(
@@ -19,7 +18,7 @@ module CXS_Credit_Generator #(
     // Internal Registers
     // Credits granted but not yet consumed if fifo has 10 free entries and 8 outstading then the grant
     //may be generated are 2 
-    logic [$clog2(FIFO_DEPTH+1)-1:0] fifo_free,fifo_free_reg;
+    logic [$clog2(MAX_CREDITS+1)-1:0] fifo_free,fifo_free_reg;
     logic [CREDIT_W-1:0] outstanding_credit,outstanding_credit_reg;
     logic grant_enable;
     logic return_all_credit;
@@ -61,7 +60,7 @@ module CXS_Credit_Generator #(
         end 
         else if  (!i_CXS_Credit_Generator_cxsvalid && i_CXS_Credit_Generator_buf_release)
         begin
-            if (fifo_free < FIFO_DEPTH)
+            if (fifo_free < MAX_CREDITS)
             fifo_free = fifo_free + 1;
         end 
 
@@ -70,7 +69,7 @@ module CXS_Credit_Generator #(
         // case ({i_CXS_Credit_Generator_cxsvalid, grant_enable, i_CXS_Credit_Generator_buf_release})
         //     // 001 : Buffer released only
         //     3'b001: begin
-        //         if (fifo_free < FIFO_DEPTH)
+        //         if (fifo_free < MAX_CREDITS)
         //             fifo_free = fifo_free + 1;
         //     end
         //     // 010 : Grant credit only
@@ -80,7 +79,7 @@ module CXS_Credit_Generator #(
         //     end
         //     // 011 : Grant credit + buffer released
         //     3'b011: begin
-        //         if (fifo_free < FIFO_DEPTH)
+        //         if (fifo_free < MAX_CREDITS)
         //             fifo_free = fifo_free + 1;
         //         if (outstanding_credit < MAX_CREDITS)
         //             outstanding_credit = outstanding_credit + 1;
@@ -112,7 +111,7 @@ module CXS_Credit_Generator #(
     begin
         if(!i_CXS_Credit_Generator_rst_n)
         begin
-            fifo_free_reg          <= FIFO_DEPTH;
+            fifo_free_reg          <= MAX_CREDITS;
             outstanding_credit_reg <= 0;
             //o_CXS_Credit_Generator_cxscrdgnt <= 0;
             o_CXS_Credit_Generator_return_all_credit <= 0;

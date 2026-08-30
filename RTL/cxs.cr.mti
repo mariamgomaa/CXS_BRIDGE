@@ -12,6 +12,13 @@ Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 
 Top level modules:
 	parity_unit
 
+} {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/ATU/ATU.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/ATU/ATU.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module address_translation_unit
+
+Top level modules:
+	address_translation_unit
+
 } {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_TX/CXS_Link_Control_TX.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_TX/CXS_Link_Control_TX.sv
 Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
 -- Compiling module CXS_Link_Control_TX
@@ -32,13 +39,6 @@ Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 
 
 Top level modules:
 	config_addr_ctrl
-
-} {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CONTROL_UNIT/control_unit_fsm.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CONTROL_UNIT/control_unit_fsm.sv
-Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
--- Compiling module control_unit_fsm
-
-Top level modules:
-	control_unit_fsm
 
 } {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_TOP/CXS_TOP.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_TOP/CXS_TOP.sv
 Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
@@ -68,13 +68,6 @@ Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 
 Top level modules:
 	DATA_SYNC
 
-} {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_RX/CXS_Boundry_Extractor.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_RX/CXS_Boundry_Extractor.sv
-Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
--- Compiling module CXS_Boundry_Extractor
-
-Top level modules:
-	CXS_Boundry_Extractor
-
 } {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_RX/CXS_Decoder.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_RX/CXS_Decoder.sv
 Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
 -- Compiling module cxscntl_decoder
@@ -82,19 +75,12 @@ Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 
 Top level modules:
 	cxscntl_decoder
 
-} {} {}} {C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_TX/CXS_flit_transmitter (1).sv} {1 {vlog -work work -sv -stats=none {C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_TX/CXS_flit_transmitter (1).sv}
+} {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_RX/CXS_Boundry_Extractor.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_RX/CXS_Boundry_Extractor.sv
 Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
--- Compiling module CXS_flit_transmitter
+-- Compiling module CXS_Boundry_Extractor
 
 Top level modules:
-	CXS_flit_transmitter
-
-} {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CONTROL_UNIT/control_unit.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CONTROL_UNIT/control_unit.sv
-Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
--- Compiling module control_unit
-
-Top level modules:
-	control_unit
+	CXS_Boundry_Extractor
 
 } {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_TX/CXS_TX_Credit_Counter.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_TX/CXS_TX_Credit_Counter.sv
 Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
@@ -103,7 +89,20 @@ Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 
 Top level modules:
 	CXS_TX_Credit_Counter
 
-} {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_TX/CXS_TX_TOP.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_TX/CXS_TX_TOP.sv
+} {} {}} {C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_TX/CXS_flit_transmitter (1).sv} {1 {vlog -work work -sv -stats=none {C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_TX/CXS_flit_transmitter (1).sv}
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module CXS_flit_transmitter
+
+Top level modules:
+	CXS_flit_transmitter
+
+} {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CONTROL_UNIT/control_unit.sv {0 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CONTROL_UNIT/control_unit.sv
+Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
+-- Compiling module control_unit
+** Error: (vlog-13069) C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CONTROL_UNIT/control_unit.sv(180): near "--": syntax error, unexpected --.
+** Error: C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CONTROL_UNIT/control_unit.sv(187): (vlog-13205) Syntax error found in the scope following 'o_control_unit_data'. Is there a missing '::'?
+
+} {4.0 6.0} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_TX/CXS_TX_TOP.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_TX/CXS_TX_TOP.sv
 Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
 -- Compiling module CXS_TX_TOP
 
@@ -124,12 +123,12 @@ Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 
 Top level modules:
 	control_unit_tb
 
-} {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_RX/CXS_Reciever.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_RX/CXS_Reciever.sv
+} {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CONTROL_UNIT/header_validitor.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CONTROL_UNIT/header_validitor.sv
 Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
--- Compiling module CXS_flit_receiver
+-- Compiling module header_validitor
 
 Top level modules:
-	CXS_flit_receiver
+	header_validitor
 
 } {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CONTROL_UNIT/header_decoder.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CONTROL_UNIT/header_decoder.sv
 Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
@@ -138,12 +137,12 @@ Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 
 Top level modules:
 	header_decoder
 
-} {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CONTROL_UNIT/header_validitor.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CONTROL_UNIT/header_validitor.sv
+} {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_RX/CXS_Reciever.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_RX/CXS_Reciever.sv
 Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
--- Compiling module header_validitor
+-- Compiling module CXS_flit_receiver
 
 Top level modules:
-	header_validitor
+	CXS_flit_receiver
 
 } {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_RX/CXS_Link_Control.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CXS_INTERFACE/CXS_RX/CXS_Link_Control.sv
 Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
@@ -158,12 +157,5 @@ Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 
 
 Top level modules:
 	Flit_Decoder
-
-} {} {}} C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CDC_ASYNCH_FIFO_SYNCHRONIAZER/Asynch_FIFO.sv {1 {vlog -work work -sv -stats=none C:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL/CDC_ASYNCH_FIFO_SYNCHRONIAZER/Asynch_FIFO.sv
-Model Technology ModelSim - Intel FPGA Edition vlog 2020.1 Compiler 2020.02 Feb 28 2020
--- Compiling module async_fifo
-
-Top level modules:
-	async_fifo
 
 } {} {}}

@@ -11,15 +11,15 @@ cModel Technology
 Z0 dC:/Users/amf-g/OneDrive/Desktop/internship/CXS_PRIDGE/costum_cxs_bridge/CXS_BRIDGE/CXS_BRIDGE/RTL
 vaddress_translation_unit
 Z1 DXx6 sv_std 3 std 0 22 VYECXdT12H8WgbUP_5Y6:3
-Z2 !s110 1787602245
+Z2 !s110 1788105388
 !i10b 1
-!s100 VZUFQ3adcf1G3Bgc4]<FM3
+!s100 =obkQRCYT6U@=CKTXhH3o2
 Z3 !s11b Dg1SIo80bB@j0V0VzS_@n1
-I^Z1ZM?J8BBfiQeVbAhhgg1
+Iz9MH@;=V`3_diUSA`EER:3
 Z4 VDg1SIo80bB@j0V0VzS_@n1
 S1
 R0
-w1787602026
+w1788044941
 8ATU/ATU.sv
 FATU/ATU.sv
 !i122 0
@@ -28,7 +28,7 @@ Z5 OV;L;2020.1;71
 r1
 !s85 0
 31
-Z6 !s108 1787602245.000000
+Z6 !s108 1788105388.000000
 !s107 ATU/ATU.sv|
 !s90 -reportprogress|300|-sv|ATU/ATU.sv|
 !i113 1
@@ -38,17 +38,17 @@ vasync_fifo
 R1
 R2
 !i10b 1
-!s100 0h:<o`6LNb41<WM9iL8Oe2
+!s100 Pfb75]QYP1zcXijEzORg_1
 R3
-IV3`@PiWKgF0^Z07FL4@D;3
+ILYaL585=P@4DRENgP=j^z2
 R4
 S1
 R0
-w1786830434
+w1788103148
 8CDC_ASYNCH_FIFO_SYNCHRONIAZER/Asynch_FIFO.sv
 FCDC_ASYNCH_FIFO_SYNCHRONIAZER/Asynch_FIFO.sv
 !i122 1
-L0 1 146
+L0 1 130
 R5
 r1
 !s85 0
@@ -63,17 +63,17 @@ vcentral_data_memory
 R1
 R2
 !i10b 1
-!s100 0aXl^]B2JlkdPmcdD=Udh1
+!s100 Gn@N:84JZB_;Ro6OBYkNR0
 R3
-I>9<H^6@AX`Rloddc]LKla2
+IV6>Zf^5K3BkEhc@1hhI;m3
 R4
 S1
 R0
-w1787602159
+w1788058006
 8CDM/CDM.sv
 FCDM/CDM.sv
-!i122 3
-L0 1 79
+!i122 4
+L0 1 70
 R5
 r1
 !s85 0
@@ -86,7 +86,7 @@ o-sv
 R7
 vconfig_addr_ctrl
 R1
-R2
+Z8 !s110 1788105389
 !i10b 1
 !s100 H8XkKJz7hhnnRHhA98?O]1
 R3
@@ -97,13 +97,13 @@ R0
 w1787098810
 8CONTROL_UNIT/config_addr_ctrl.sv
 FCONTROL_UNIT/config_addr_ctrl.sv
-!i122 7
+!i122 8
 L0 1 46
 R5
 r1
 !s85 0
 31
-R6
+Z9 !s108 1788105389.000000
 !s107 CONTROL_UNIT/config_addr_ctrl.sv|
 !s90 -reportprogress|300|-sv|CONTROL_UNIT/config_addr_ctrl.sv|
 !i113 1
@@ -111,24 +111,24 @@ o-sv
 R7
 vcontrol_unit
 R1
-R2
+R8
 !i10b 1
-!s100 SZ>NF5A;N67YCS^Z;Of1o0
+!s100 l1DkSOQP06NT09;`8<2V40
 R3
-IAm;[[LF;9@MJ8H7;OoI?V3
+IR@hFzT`@6;8EL3zzG]?iG3
 R4
 S1
 R0
-w1787598737
+w1788055260
 8CONTROL_UNIT/control_unit.sv
 FCONTROL_UNIT/control_unit.sv
-!i122 8
-L0 2 212
+!i122 9
+L0 2 214
 R5
 r1
 !s85 0
 31
-R6
+R9
 !s107 CONTROL_UNIT/control_unit.sv|
 !s90 -reportprogress|300|-sv|CONTROL_UNIT/control_unit.sv|
 !i113 1
@@ -136,24 +136,24 @@ o-sv
 R7
 vcontrol_unit_fsm
 R1
-R2
+R8
 !i10b 1
-!s100 CDUd6V1YA7>QG=`1onh?I3
+!s100 _b:gCKSUj>2?V^V[635O^3
 R3
-I=02PLDaz3F:FWVTBl><723
+IPOf@j[EfE0[=nMDjIQXcG1
 R4
 S1
 R0
-w1787580528
+w1788102898
 8CONTROL_UNIT/control_unit_fsm.sv
 FCONTROL_UNIT/control_unit_fsm.sv
-!i122 9
-L0 2 391
+!i122 10
+L0 2 407
 R5
 r1
 !s85 0
 31
-R6
+R9
 !s107 CONTROL_UNIT/control_unit_fsm.sv|
 !s90 -reportprogress|300|-sv|CONTROL_UNIT/control_unit_fsm.sv|
 !i113 1
@@ -161,7 +161,7 @@ o-sv
 R7
 vcontrol_unit_tb
 R1
-R2
+R8
 !i10b 1
 !s100 XBOHfO;8l^hNg;:7jF7M40
 R3
@@ -172,13 +172,13 @@ R0
 w1785864732
 8CONTROL_UNIT/control_unit_tb.sv
 FCONTROL_UNIT/control_unit_tb.sv
-!i122 10
+!i122 11
 L0 3 258
 R5
 r1
 !s85 0
 31
-R6
+R9
 !s107 CONTROL_UNIT/control_unit_tb.sv|
 !s90 -reportprogress|300|-sv|CONTROL_UNIT/control_unit_tb.sv|
 !i113 1
@@ -186,7 +186,7 @@ o-sv
 R7
 vCXS_Boundry_Extractor
 R1
-Z8 !s110 1787602246
+R8
 !i10b 1
 !s100 FM0hm9Zje?^Ol?2j:iE;11
 R3
@@ -197,13 +197,13 @@ R0
 w1786871156
 8CXS_INTERFACE/CXS_RX/CXS_Boundry_Extractor.sv
 FCXS_INTERFACE/CXS_RX/CXS_Boundry_Extractor.sv
-!i122 13
+!i122 14
 L0 1 31
 R5
 r1
 !s85 0
 31
-Z9 !s108 1787602246.000000
+R9
 !s107 CXS_INTERFACE/CXS_RX/CXS_Boundry_Extractor.sv|
 !s90 -reportprogress|300|-sv|CXS_INTERFACE/CXS_RX/CXS_Boundry_Extractor.sv|
 !i113 1
@@ -214,17 +214,17 @@ vCXS_Credit_Generator
 R1
 R8
 !i10b 1
-!s100 NUjlL5FDfeB7cHE5=VmTm1
+!s100 kDHiWez`H1M`AfXgdEUGR0
 R3
-I2K>bHhncG^>5kQ64430fO2
+I`KWTA_kS`WQk6Mn]e<oO71
 R4
 S1
 R0
-w1787573597
+w1787665120
 8CXS_INTERFACE/CXS_RX/CXS_Credit_Generator.sv
 FCXS_INTERFACE/CXS_RX/CXS_Credit_Generator.sv
-!i122 14
-L0 1 130
+!i122 15
+L0 1 129
 R5
 r1
 !s85 0
@@ -238,7 +238,7 @@ R7
 n@c@x@s_@credit_@generator
 vCXS_flit_receiver
 R1
-R8
+Z10 !s110 1788105390
 !i10b 1
 !s100 hnZa>2R8U1A=`1n`cU=5H2
 R3
@@ -249,13 +249,13 @@ R0
 w1786200744
 8CXS_INTERFACE/CXS_RX/CXS_Reciever.sv
 FCXS_INTERFACE/CXS_RX/CXS_Reciever.sv
-!i122 17
+!i122 18
 L0 5 45
 R5
 r1
 !s85 0
 31
-R9
+Z11 !s108 1788105390.000000
 !s107 CXS_INTERFACE/CXS_RX/CXS_Reciever.sv|
 !s90 -reportprogress|300|-sv|CXS_INTERFACE/CXS_RX/CXS_Reciever.sv|
 !i113 1
@@ -264,7 +264,7 @@ R7
 n@c@x@s_flit_receiver
 vCXS_flit_transmitter
 R1
-Z10 !s110 1787602247
+R10
 !i10b 1
 !s100 Jj;3Jj3LCg4D:PD?YIU@A0
 R3
@@ -275,13 +275,13 @@ R0
 w1787490154
 8CXS_INTERFACE/CXS_TX/CXS_flit_transmitter (1).sv
 FCXS_INTERFACE/CXS_TX/CXS_flit_transmitter (1).sv
-!i122 20
+!i122 21
 L0 1 102
 R5
 r1
 !s85 0
 31
-R9
+R11
 !s107 CXS_INTERFACE/CXS_TX/CXS_flit_transmitter (1).sv|
 !s90 -reportprogress|300|-sv|CXS_INTERFACE/CXS_TX/CXS_flit_transmitter (1).sv|
 !i113 1
@@ -290,7 +290,7 @@ R7
 n@c@x@s_flit_transmitter
 vCXS_Link_Control
 R1
-R8
+R10
 !i10b 1
 !s100 Q5`KfoUz42NAGPSVDT^c51
 R3
@@ -301,7 +301,7 @@ R0
 w1786207994
 8CXS_INTERFACE/CXS_RX/CXS_Link_Control.sv
 FCXS_INTERFACE/CXS_RX/CXS_Link_Control.sv
-!i122 16
+!i122 17
 L0 1 82
 R5
 r1
@@ -327,13 +327,13 @@ R0
 w1787573730
 8CXS_INTERFACE/CXS_TX/CXS_Link_Control_TX.sv
 FCXS_INTERFACE/CXS_TX/CXS_Link_Control_TX.sv
-!i122 21
+!i122 22
 L0 1 72
 R5
 r1
 !s85 0
 31
-Z11 !s108 1787602247.000000
+R11
 !s107 CXS_INTERFACE/CXS_TX/CXS_Link_Control_TX.sv|
 !s90 -reportprogress|300|-sv|CXS_INTERFACE/CXS_TX/CXS_Link_Control_TX.sv|
 !i113 1
@@ -344,16 +344,16 @@ vCXS_Pkt_Formatter
 R1
 R10
 !i10b 1
-!s100 ?UP:SE2HDU4;3XUaF32cI2
+!s100 aeKlUQWo?DZB9D]R@^P[12
 R3
-I:je=9DHGa=?ZFl^Bd[7O`3
+I5;EXFZjC;MN=`HM`=kTo52
 R4
 S1
 R0
-w1787476949
+w1787669175
 8CXS_INTERFACE/CXS_TX/CXS_Pkt_Formatter.sv
 FCXS_INTERFACE/CXS_TX/CXS_Pkt_Formatter.sv
-!i122 22
+!i122 23
 L0 7 68
 R5
 r1
@@ -368,24 +368,24 @@ R7
 n@c@x@s_@pkt_@formatter
 vCXS_RX_TOP
 R1
-R8
+R10
 !i10b 1
-!s100 i=K]>K]bo0X<<SS`4=lM;3
+!s100 Q3EbH^jC9Af9OHz3kl?@Z1
 R3
-IC>Xj]K1L_:zjm?eX^n^Ym2
+IKF?iSWh]=]e:05c?VZlJC2
 R4
 S1
 R0
-w1787484615
+w1787665142
 8CXS_INTERFACE/CXS_RX/CXS_RX_TOP.sv
 FCXS_INTERFACE/CXS_RX/CXS_RX_TOP.sv
-!i122 18
-L0 1 141
+!i122 19
+L0 1 139
 R5
 r1
 !s85 0
 31
-R9
+R11
 !s107 CXS_INTERFACE/CXS_RX/CXS_RX_TOP.sv|
 !s90 -reportprogress|300|-sv|CXS_INTERFACE/CXS_RX/CXS_RX_TOP.sv|
 !i113 1
@@ -394,24 +394,24 @@ R7
 n@c@x@s_@r@x_@t@o@p
 vCXS_SYSTEM_TOP
 R1
-R10
+Z12 !s110 1788105391
 !i10b 1
-!s100 HHngS[JO<fnQ<86E<V[no1
+!s100 V7?JneI6cPi5Dj0;R4U<a0
 R3
-IJ`^bdWI7F^z?3gM:oBYY93
+Igh@WHWJignK;ZB01QU[HI1
 R4
 S1
 R0
-w1787602230
+w1788105161
 8SYSTEM_TOP/CXS_BRIDGE_TOP.sv
 FSYSTEM_TOP/CXS_BRIDGE_TOP.sv
-!i122 26
-L0 1 532
+!i122 27
+L0 1 565
 R5
 r1
 !s85 0
 31
-R11
+Z13 !s108 1788105391.000000
 !s107 SYSTEM_TOP/CXS_BRIDGE_TOP.sv|
 !s90 -reportprogress|300|-sv|SYSTEM_TOP/CXS_BRIDGE_TOP.sv|
 !i113 1
@@ -420,24 +420,24 @@ R7
 n@c@x@s_@s@y@s@t@e@m_@t@o@p
 vCXS_SYSTEM_TOP_TB
 R1
-!s110 1787602248
+R12
 !i10b 1
-!s100 n2One:YcME014dCA74BI_3
+!s100 WMgXiB5O=i97OVEJB0TgQ1
 R3
-I]fn]fBcDhMHK^dJTQ9:Tc3
+I=]ao@=>_ZEXb;;dHnHDB_0
 R4
 S1
 R0
-w1787600377
+w1788105267
 8TEST_BENCH/CXS_BRIDGE_tb.sv
 FTEST_BENCH/CXS_BRIDGE_tb.sv
-!i122 27
-L0 3 774
+!i122 28
+L0 3 783
 R5
 r1
 !s85 0
 31
-R11
+R13
 !s107 TEST_BENCH/CXS_BRIDGE_tb.sv|
 !s90 -reportprogress|300|-sv|TEST_BENCH/CXS_BRIDGE_tb.sv|
 !i113 1
@@ -446,24 +446,24 @@ R7
 n@c@x@s_@s@y@s@t@e@m_@t@o@p_@t@b
 vCXS_TOP
 R1
-R10
+R12
 !i10b 1
-!s100 06gHiZAiT8D?9T;B1eRWI3
+!s100 fSETNQe=Ad2Z2IAma03`<3
 R3
-I;h>O2^4FPlBN`kn5OHQfe1
+IBm@VA>g[ZnZ?gBXWLLH0n3
 R4
 S1
 R0
-w1787489406
+w1787665203
 8CXS_INTERFACE/CXS_TOP/CXS_TOP.sv
 FCXS_INTERFACE/CXS_TOP/CXS_TOP.sv
-!i122 25
-L0 1 109
+!i122 26
+L0 1 107
 R5
 r1
 !s85 0
 31
-R11
+R13
 !s107 CXS_INTERFACE/CXS_TOP/CXS_TOP.sv|
 !s90 -reportprogress|300|-sv|CXS_INTERFACE/CXS_TOP/CXS_TOP.sv|
 !i113 1
@@ -472,7 +472,7 @@ R7
 n@c@x@s_@t@o@p
 vCXS_TX_Credit_Counter
 R1
-R10
+R12
 !i10b 1
 !s100 B7DWi>_b0C;]lCO8hMMOd3
 R3
@@ -483,7 +483,7 @@ R0
 w1787486277
 8CXS_INTERFACE/CXS_TX/CXS_TX_Credit_Counter.sv
 FCXS_INTERFACE/CXS_TX/CXS_TX_Credit_Counter.sv
-!i122 23
+!i122 24
 L0 7 41
 R5
 r1
@@ -498,7 +498,7 @@ R7
 n@c@x@s_@t@x_@credit_@counter
 vCXS_TX_TOP
 R1
-R10
+R12
 !i10b 1
 !s100 WEVobAc?IlV^lE]=WWnQ82
 R3
@@ -509,13 +509,13 @@ R0
 w1787489467
 8CXS_INTERFACE/CXS_TX/CXS_TX_TOP.sv
 FCXS_INTERFACE/CXS_TX/CXS_TX_TOP.sv
-!i122 24
+!i122 25
 L0 1 148
 R5
 r1
 !s85 0
 31
-R11
+R13
 !s107 CXS_INTERFACE/CXS_TX/CXS_TX_TOP.sv|
 !s90 -reportprogress|300|-sv|CXS_INTERFACE/CXS_TX/CXS_TX_TOP.sv|
 !i113 1
@@ -535,7 +535,7 @@ R0
 w1786200720
 8CXS_INTERFACE/CXS_RX/CXS_Decoder.sv
 FCXS_INTERFACE/CXS_RX/CXS_Decoder.sv
-!i122 15
+!i122 16
 L0 2 105
 R5
 r1
@@ -549,7 +549,7 @@ o-sv
 R7
 vcxscntl_encoder
 R1
-R8
+R10
 !i10b 1
 !s100 Z@3QZ^X4T0hD0b<n;GWIB3
 R3
@@ -560,13 +560,13 @@ R0
 w1787477357
 8CXS_INTERFACE/CXS_TX/CXS_Cntl_Encoder.sv
 FCXS_INTERFACE/CXS_TX/CXS_Cntl_Encoder.sv
-!i122 19
+!i122 20
 L0 2 37
 R5
 r1
 !s85 0
 31
-R9
+R11
 !s107 CXS_INTERFACE/CXS_TX/CXS_Cntl_Encoder.sv|
 !s90 -reportprogress|300|-sv|CXS_INTERFACE/CXS_TX/CXS_Cntl_Encoder.sv|
 !i113 1
@@ -602,17 +602,17 @@ vencryption_unit
 R1
 R2
 !i10b 1
-!s100 3QOMef?XX]PMBhE21[oS73
+!s100 _:IX7YVTEQJVE5L8jifRm2
 R3
-I2J<P3]]jDNBgZdNM?8fEA2
+IdC7c:hR>KA5>8ZdGWDPBQ1
 R4
 S1
 R0
-w1787569274
+w1787668722
 8ENCRYPTION_PARITY/encryption_unit.sv
 FENCRYPTION_PARITY/encryption_unit.sv
-!i122 4
-L0 1 81
+!i122 5
+L0 1 80
 R5
 r1
 !s85 0
@@ -625,24 +625,24 @@ o-sv
 R7
 vFlit_Decoder
 R1
-R2
+R8
 !i10b 1
-!s100 MP1Hh0n42_nhGO60@EcAM2
+!s100 f??bZP[OSn25ein^8fJa;1
 R3
-I[Db=CPo=D<DChhemjg:G72
+ImJMHDhHCSQejlJB5n<I082
 R4
 S1
 R0
-w1786996950
+w1787682578
 8FLIT_DECODER/Flit_Decoder.sv
 FFLIT_DECODER/Flit_Decoder.sv
-!i122 6
-L0 1 232
+!i122 7
+L0 1 188
 R5
 r1
 !s85 0
 31
-R6
+R9
 !s107 FLIT_DECODER/Flit_Decoder.sv|
 !s90 -reportprogress|300|-sv|FLIT_DECODER/Flit_Decoder.sv|
 !i113 1
@@ -651,7 +651,7 @@ R7
 n@flit_@decoder
 vheader_decoder
 R1
-R2
+R8
 !i10b 1
 !s100 Rg8;19N?QDCM8ngKWT3=J3
 R3
@@ -662,13 +662,13 @@ R0
 w1785629566
 8CONTROL_UNIT/header_decoder.sv
 FCONTROL_UNIT/header_decoder.sv
-!i122 11
+!i122 12
 L0 1 33
 R5
 r1
 !s85 0
 31
-R6
+R9
 !s107 CONTROL_UNIT/header_decoder.sv|
 !s90 -reportprogress|300|-sv|CONTROL_UNIT/header_decoder.sv|
 !i113 1
@@ -687,13 +687,13 @@ R0
 w1785629567
 8CONTROL_UNIT/header_validitor.sv
 FCONTROL_UNIT/header_validitor.sv
-!i122 12
+!i122 13
 L0 1 92
 R5
 r1
 !s85 0
 31
-R6
+R9
 !s107 CONTROL_UNIT/header_validitor.sv|
 !s90 -reportprogress|300|-sv|CONTROL_UNIT/header_validitor.sv|
 !i113 1
@@ -712,7 +712,7 @@ R0
 w1785013323
 8ENCRYPTION_PARITY/parity_unit.sv
 FENCRYPTION_PARITY/parity_unit.sv
-!i122 5
+!i122 6
 L0 1 43
 R5
 r1
@@ -724,3 +724,29 @@ R6
 !i113 1
 o-sv
 R7
+vRST_SYNCH
+R1
+R2
+!i10b 1
+!s100 1VdDa:0HG6;ANjUF6[3go2
+R3
+IE>K4NKN^]VHE@d_<b6I=Z2
+R4
+S1
+R0
+w1788105377
+8CDC_ASYNCH_FIFO_SYNCHRONIAZER/RST_SYNC.sv
+FCDC_ASYNCH_FIFO_SYNCHRONIAZER/RST_SYNC.sv
+!i122 3
+L0 1 19
+R5
+r1
+!s85 0
+31
+R6
+!s107 CDC_ASYNCH_FIFO_SYNCHRONIAZER/RST_SYNC.sv|
+!s90 -reportprogress|300|-sv|CDC_ASYNCH_FIFO_SYNCHRONIAZER/RST_SYNC.sv|
+!i113 1
+o-sv
+R7
+n@r@s@t_@s@y@n@c@h

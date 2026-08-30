@@ -1,4 +1,5 @@
 module CXS_SYSTEM_TOP #(
+    parameter int NUMBER_STAGES = 2,
     //--------------------------------------------------
     // CXS Parameters
     //--------------------------------------------------
@@ -27,18 +28,17 @@ module CXS_SYSTEM_TOP #(
     parameter int CNTL_W                = 3 * CXSMAXPAYLOADPERFLIT,
     parameter int FIFO_WIDTH            = CNTL_W + CXSDATAFLITWIDTH,
     parameter int CREDIT_W              = $clog2(MAX_CREDITS + 1),
-    parameter int PAYLOAD_INFO_W        = FIFO_WIDTH/2,
     parameter int ENCRYPTED_W           = 2 * DATA_W,
     parameter int CDM_DATA_W            = ENCRYPTED_W + 1,
     parameter int CONFIG_DATA_W         = 32,
     parameter int DEPTH                 = 512
     
 )(
+    input logic                        i_rst_n,
     //--------------------------------------------------
     // RX CXS INTERFACE
     //--------------------------------------------------
     input logic                         i_cxs_clk,
-    input logic                         i_cxs_rst_n,
     input logic [CXSDATAFLITWIDTH-1:0]  i_cxsdata,
     input logic [CNTL_W-1:0]            i_cxscntl,
     input logic                         i_cxsvalid,
@@ -53,7 +53,6 @@ module CXS_SYSTEM_TOP #(
     // FIFO Read / Processing Clock Domain
     //--------------------------------------------------
     input logic                         i_system_clk,
-    input logic                         i_system_rst_n,
 
     //--------------------------------------------------
     // Outputs for cxs interface 
@@ -70,8 +69,8 @@ module CXS_SYSTEM_TOP #(
     //--------------------------------------
     input  logic                     i_app_rd_en,
     input  logic [LOGICAL_ADD_W-1:0] i_app_rd_address,
-    output logic [CDM_DATA_W-1:0]    o_app_rd_data,
-    output logic                     o_app_rd_valid
+    input logic                      i_app_ack,
+    output logic [CDM_DATA_W-1:0]    o_app_rd_data
 );
 
 
@@ -107,7 +106,7 @@ module CXS_SYSTEM_TOP #(
     logic                  flit_decoder_cu_valid;
     logic                  control_unit_rd_fifo_en;
 
-    logic [PAYLOAD_INFO_W-1:0]  decoded_payload;
+    logic [PAYLOAD_W-1:0]  decoded_payload;
 
     //--------------------------------------------------
     // Control Unit --> Configuration / CDM
@@ -125,6 +124,7 @@ module CXS_SYSTEM_TOP #(
     logic                  addr_mode;
     logic [2:0]            enc_mode;
     logic [1:0]            parity_mode;
+    logic [ADDR_W-1:0]     device_count;
 
     //--------------------------------------------------
     // Encryption Unit
@@ -156,6 +156,10 @@ module CXS_SYSTEM_TOP #(
     logic [7:0]                     base_address;
     logic [LOGICAL_ADD_W-1 : 0]            atu_address ;
     logic                           atu_valid;
+
+    logic error_pkt;
+    logic start_pkt;
+    logic end_pkt;
     //====================================================
     //CXS  INTERFACE TOP
     //====================================================
@@ -167,7 +171,6 @@ module CXS_SYSTEM_TOP #(
     .CXSDATAFLITWIDTH (CXSDATAFLITWIDTH),
     .CNTL_W (CNTL_W),
     //parameter for credit generator 
-    .FIFO_DEPTH (FIFO_DEPTH),
     .MAX_CREDITS(MAX_CREDITS),
     .CREDIT_W(CREDIT_W),
     .FIFO_WIDTH (FIFO_WIDTH)
@@ -176,7 +179,7 @@ module CXS_SYSTEM_TOP #(
 u_CXS_TOP
 (
     .i_CXS_TOP_CLK(i_cxs_clk),
-    .i_CXS_TOP_rst_n(i_cxs_rst_n),
+    .i_CXS_TOP_rst_n(cxs_rst_n),
     // CXS RECIEVER INTERFACE 
     .i_CXS_TOP_CXSDATA(i_cxsdata) ,
     .i_CXS_TOP_CXSCNTL(i_cxscntl),
@@ -222,7 +225,7 @@ DATA_SYNC #(
 u_DATA_SYNC
 (
     .i_DATA_SYNC_CLK(i_cxs_clk),
-    .i_DATA_SYNC_RST_n(i_cxs_rst_n),
+    .i_DATA_SYNC_RST_n(cxs_rst_n),
     .i_DATA_SYNC_usync_bus({status_pkt_type,status_error_type}),
     .i_DATA_SYNC_bus_enable(status_valid),
 
@@ -240,7 +243,7 @@ u_DATA_SYNC
         // Write Domain
         //------------------------------------------------
         .i_Asynch_FIFO_wr_clk  (i_cxs_clk),
-        .i_Asynch_FIFO_wr_rstn (i_cxs_rst_n),
+        .i_Asynch_FIFO_wr_rstn (cxs_rst_n),
 
         .i_Asynch_FIFO_data_in (rx_data),
         .i_Asynch_FIFO_wr_en   (fifo_wr_en),
@@ -249,7 +252,7 @@ u_DATA_SYNC
         // Read Domain
         //------------------------------------------------
         .i_Asynch_FIFO_rd_clk  (i_system_clk),
-        .i_Asynch_FIFO_rd_rstn (i_system_rst_n),
+        .i_Asynch_FIFO_rd_rstn (system_rst_n),
 
         .i_Asynch_FIFO_rd_en   (fifo_rd_en),
 
@@ -264,19 +267,37 @@ u_DATA_SYNC
         .o_Asynch_FIFO_buf_release (fifo_buf_release)
     );
 
+RST_SYNCH #(
+    .NUMBER_STAGES (NUMBER_STAGES)
+)
+u_RST_SYNCH_CXS
+(
+    .CLK(i_cxs_clk),
+    .RST(i_rst_n),
+    .SYNCH_RST(cxs_rst_n)
+);
 
+RST_SYNCH #(
+    .NUMBER_STAGES (NUMBER_STAGES)
+)
+u_RST_SYNCH_SYSTEM
+(
+    .CLK(i_system_clk),
+    .RST(i_rst_n),
+    .SYNCH_RST(system_rst_n)
+);
 ////////////////////////////////////////////////////////////////////////////
 
     Flit_Decoder #(
         .CXSMAXPAYLOADPERFLIT (CXSMAXPAYLOADPERFLIT),
         .CNTL_W (CNTL_W),
         .FIFO_WIDTH (FIFO_WIDTH),
-        .PAYLOAD_INFO_W (PAYLOAD_INFO_W),
+        .PAYLOAD_W (PAYLOAD_W),
         .CXSDATAFLITWIDTH     (CXSDATAFLITWIDTH)
     ) u_flit_decoder (
 
         .i_Flit_Decoder_clk        (i_system_clk),
-        .i_Flit_Decoder_rst_n      (i_system_rst_n),
+        .i_Flit_Decoder_rst_n      (system_rst_n),
 
         .i_Flit_Decoder_Data_in    (fifo_data_out),
         .i_Flit_Decoder_fifo_empty (fifo_empty),
@@ -291,7 +312,11 @@ u_DATA_SYNC
         .o_Flit_Decoder_cu_valid   (flit_decoder_cu_valid),
 
         // Decoded payload information
-        .o_Flit_Decoder_payload    (decoded_payload)
+        .o_Flit_Decoder_payload    (decoded_payload),
+
+        .o_Flit_Decoder_start_pkt(start_pkt),
+        .o_Flit_Decoder_end_pkt(end_pkt),
+        .o_Flit_Decoder_error_pkt(error_pkt)
 
     );
 
@@ -304,7 +329,6 @@ u_DATA_SYNC
     control_unit #(
         .PAYLOAD_W (PAYLOAD_W),
         .ADDR_W    (ADDR_W),
-        .PAYLOAD_INFO_W(PAYLOAD_INFO_W),
         .DATA_W    (DATA_W),
         .CONFIG_DATA_W (CONFIG_DATA_W)
     ) u_control_unit (
@@ -313,7 +337,7 @@ u_DATA_SYNC
         // System
         //------------------------------------------------
         .i_control_unit_clk       (i_system_clk),
-        .i_control_unit_rst_n     (i_system_rst_n),
+        .i_control_unit_rst_n     (system_rst_n),
 
         //------------------------------------------------
         // Flit Decoder Interface
@@ -328,6 +352,12 @@ u_DATA_SYNC
         .i_control_unit_config_data(
             cdm_rd_config_data[CONFIG_DATA_W-1:0]
         ),
+
+        .i_control_unit_start_pkt(start_pkt),
+        .i_control_unit_end_pkt(end_pkt),
+        .i_control_unit_error_pkt(error_pkt),
+
+        .i_control_unit_app_ack(i_app_ack),
 
         //------------------------------------------------
         // FSM Outputs
@@ -381,6 +411,9 @@ u_DATA_SYNC
         .o_control_unit_base_address
         (base_address),
 
+        .o_control_unit_device_count
+        (device_count),
+
         .o_control_unit_status_pkt_type(status_pkt_type),
         .o_control_unit_status_error_type(status_error_type)
     );
@@ -394,7 +427,8 @@ u_address_translation_unit
     .i_atu_mode(addr_mode),      // 0 = Limit Mode (future work), 1 = Region Mode
     .i_atu_address(payload_address),
     .i_atu_valid(payload_valid),
-    .i_base_address(base_address),  
+    .i_atu_start_address (device_count),
+    .i_atu_base_address(base_address),  
     .o_atu_address(atu_address),
     .o_atu_valid(atu_valid)
 );
@@ -462,7 +496,7 @@ u_address_translation_unit
             cdm_addr_valid = 1'b1;
             cdm_data_valid = 1'b1;
 
-            cdm_wr_address = {0,config_address} ;
+            cdm_wr_address = {1'b0,config_address} ;
 
             // Zero-extend configuration data to CDM width
             cdm_wr_data =
@@ -502,7 +536,7 @@ u_address_translation_unit
         // System
         //------------------------------------------------
         .i_cdm_clk          (i_system_clk),
-        .i_cdm_rst_n        (i_system_rst_n),
+        .i_cdm_rst_n        (system_rst_n),
 
         //------------------------------------------------
         // Write Interface
@@ -524,8 +558,7 @@ u_address_translation_unit
         //------------------------------------------------
         .i_cdm_app_rd_en(i_app_rd_en),
         .i_cdm_app_rd_address(i_app_rd_address),
-        .o_cdm_app_rd_data(o_app_rd_data),
-        .o_cdm_app_rd_valid(o_app_rd_valid)
+        .o_cdm_app_rd_data(o_app_rd_data)
     );
 
 

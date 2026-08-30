@@ -4,7 +4,6 @@ module CXS_RX_TOP #(
     parameter int CXSDATAFLITWIDTH = 32,
     parameter int CNTL_W = 3*CXSMAXPAYLOADPERFLIT,
     //parameter for credit generator 
-    parameter int FIFO_DEPTH = 16,
     parameter int MAX_CREDITS = 15,
     parameter int CREDIT_W = $clog2(MAX_CREDITS+1),
     parameter int FIFO_WIDTH = CNTL_W + CXSDATAFLITWIDTH
@@ -120,7 +119,6 @@ CXS_Link_Control u_CXS_Link_Control
 );
 
 CXS_Credit_Generator #(
-    .FIFO_DEPTH (FIFO_DEPTH),
     .MAX_CREDITS (MAX_CREDITS),
     .CREDIT_W (CREDIT_W)
 )

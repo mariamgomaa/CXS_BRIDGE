@@ -1,12 +1,11 @@
 module encryption_unit  #(
-    parameter int DATA_WIDTH =8 ,
-    localparam int OUTPUT_DATA_WIDTH = 2 * DATA_WIDTH
+    parameter int DATA_WIDTH =8 
 ) (
     input  logic [DATA_WIDTH-1 : 0] i_encryption_unit_payload_data,
     input  logic                    i_encryption_unit_payload_valid,
     input  logic                    i_encryption_unit_encryption_mode,   // 0: Even, 1: Odd
 
-    output logic [OUTPUT_DATA_WIDTH-1 : 0] o_encryption_unit_encrypted_data,
+    output logic [(DATA_WIDTH*2)-1 : 0] o_encryption_unit_encrypted_data,
     output logic                           o_encryption_unit_encrypted_valid
 );
     
@@ -27,9 +26,9 @@ module encryption_unit  #(
         for (i = 0; i < 8; i = i + 1)
         begin
         if (i_encryption_unit_payload_data[i] ==1'b1)
-            ones_cnt = ones_cnt + i_encryption_unit_payload_data[i];
+            ones_cnt = ones_cnt + 1;
         else 
-            zeros_cnt = zeros_cnt + i_encryption_unit_payload_data[i];
+            zeros_cnt = zeros_cnt + 1;
         end 
 
 

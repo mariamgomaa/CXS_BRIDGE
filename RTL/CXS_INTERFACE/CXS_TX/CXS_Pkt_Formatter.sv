@@ -39,7 +39,7 @@ module CXS_Pkt_Formatter #(
     logic [CXSMAXPAYLOADPERFLIT-1:0] error_field;
 
     always_comb begin
-        status_word = '0;
+        status_word [PAYLOAD_W-1 : 4] = '0;
         status_word[1:0] = i_CXS_Pkt_Formatter_status_pkt_type;
         status_word[3:2] = i_CXS_Pkt_Formatter_status_error_type;
 

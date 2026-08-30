@@ -25,8 +25,7 @@ module central_data_memory #(
     // application layer, e.g. to check a location before overwriting it.
     input  logic                     i_cdm_app_rd_en,
     input  logic [LOGICAL_ADD_W-1:0] i_cdm_app_rd_address,
-    output logic [DATA_WIDTH-1:0]    o_cdm_app_rd_data,
-    output logic                     o_cdm_app_rd_valid
+    output logic [DATA_WIDTH-1:0]    o_cdm_app_rd_data
 );
 
     integer i;
@@ -41,15 +40,8 @@ module central_data_memory #(
             end
             o_cdm_cfg_data      <= '0;
             o_cdm_cfg_valid     <= 1'b0;
-            o_cdm_app_rd_data   <= '0;
-            o_cdm_app_rd_valid  <= 1'b0;
         end
         else begin
-            //================================================
-            // Default status signals
-            //================================================
-            o_cdm_app_rd_valid <= 1'b0;
-
             //================================================
             // Write port
             //================================================
@@ -66,14 +58,13 @@ module central_data_memory #(
                                 memory[0][DATA_WIDTH-2:0]};
             o_cdm_cfg_valid <= 1'b1;
             end
+        end
+    end
+
             //================================================
             // Application read port
             //================================================
-            if (i_cdm_app_rd_en) begin
-                o_cdm_app_rd_data  <= memory[i_cdm_app_rd_address];
-                o_cdm_app_rd_valid <= 1'b1;
-            end
-        end
-    end
+            assign o_cdm_app_rd_data = (i_cdm_app_rd_en) ? memory[i_cdm_app_rd_address] : 'b0;
+
 
 endmodule
