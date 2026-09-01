@@ -1,0 +1,83 @@
+| Test level          | Number/type                               |
+| ------------------- | ----------------------------------------- |
+| **FIFO TB**         | T27–T31 + many more exhaustive FIFO cases |
+| **FSM TBs**         | T06–T11, invalid transitions              |
+| **Decoder TB**      | T19–T26                                   |
+| **Control Unit TB** | T38–T42                                   |
+| **CDM TB**          | T43–T47                                   |
+| **Integration TB**  | RX/TX path combinations                   |
+| **System TB**       | ~15–20 representative end-to-end tests    |
+| **Random TB**       | Stress + combinations                     |
+
+
+SYSTEM TESTS
+│
+├── Reset
+│   ├── T01 Power-on reset
+│   ├── T02 Reset during RX
+│   ├── T03 Reset during TX
+│   ├── T04 Reset during FIFO operation
+│   └── T05 Reset while waiting for ACK
+│
+├── LINK
+│   ├── T06 Normal activation
+│   ├── T07 Delayed ACK
+│   ├── T08 No ACK
+│   ├── T09 Normal deactivation
+│   ├── T10 Deactivation during traffic
+│   └── T11 Reactivation
+│
+├── PACKETS
+│   ├── T12 Valid CONFIG
+│   ├── T13 Invalid CONFIG
+│   ├── T14 LINK packet
+│   ├── T15 DATA packet
+│   ├── T16 Single-flit packet
+│   ├── T17 Maximum packet
+│   ├── T18 Back-to-back packets
+│   ├── T19 Missing END
+│   ├── T20 END without START
+│   └── T21 Invalid packet sequence
+│
+├── ERROR
+│   ├── T22 ERROR payload0
+│   ├── T23 ERROR payload1
+│   ├── T24 ERROR both payloads
+│   ├── T25 Error recovery
+│   └── T26 Bad packet → valid packet
+│
+├── FIFO
+│   ├── T27 FIFO empty
+│   ├── T28 FIFO full
+│   ├── T29 FIFO simultaneous R/W
+│   ├── T30 FIFO overflow attempt
+│   └── T31 FIFO underflow attempt
+│
+├── CREDIT
+│   ├── T32 Zero credits
+│   ├── T33 One credit
+│   ├── T34 Maximum credits
+│   ├── T35 Credit starvation
+│   ├── T36 Credit return
+│   └── T37 Back-to-back credits
+│
+├── CONFIGURATION
+│   ├── T38 Minimum device count
+│   ├── T39 Maximum device count
+│   ├── T40 Address modes
+│   ├── T41 Encryption modes
+│   └── T42 Parity modes
+│
+├── CDM
+│   ├── T43 Minimum address
+│   ├── T44 Maximum address
+│   ├── T45 Consecutive addresses
+│   ├── T46 Same address twice
+│   └── T47 Multiple CDM readbacks
+│
+└── STRESS
+    ├── T48 Continuous packets
+    ├── T49 Continuous TX
+    ├── T50 Long credit starvation
+    ├── T51 Random packet sequence
+    └── T52 Random reset/traffic timing

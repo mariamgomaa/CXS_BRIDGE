@@ -26,7 +26,7 @@ T=95000 | ACT_REQ=1 ACT_ACK=1 | VALID=0 DATA=00000000 CNTL=000000 | CRDGNT=1
  || FSM: cur=IDLE nxt=IDLE | BUF_REL=0 ||
  CU_IN: addr=00 data=00 cfg_addr=00 cfg_data=0000 | CU_EN: rd_fifo=0 rd_cfg=0 cfg_we=0 payload_v=0 status_v=0 | MODE: addr_mode=0 enc_mode=000 parity_mode=00 
 
-T=100000 | ACT_REQ=1 ACT_ACK=1 | VALID=1 DATA=00004444 CNTL=010110 | CRDGNT=1 
+T=100000 | ACT_REQ=1 ACT_ACK=1 | VALID=1 DATA=00004444 CNTL=000110 | CRDGNT=1 
  || FSM: cur=IDLE nxt=IDLE | BUF_REL=0 ||
  CU_IN: addr=00 data=00 cfg_addr=00 cfg_data=0000 | CU_EN: rd_fifo=0 rd_cfg=0 cfg_we=0 payload_v=0 status_v=0 | MODE: addr_mode=0 enc_mode=000 parity_mode=00 
 
@@ -122,7 +122,7 @@ T=215000 | ACT_REQ=1 ACT_ACK=1 | VALID=0 DATA=00000000 CNTL=000000 | CRDGNT=1
  || FSM: cur=ERROR nxt=ERROR | BUF_REL=0 ||
  CU_IN: addr=00 data=00 cfg_addr=00 cfg_data=0000 | CU_EN: rd_fifo=1 rd_cfg=0 cfg_we=0 payload_v=0 status_v=1 | MODE: addr_mode=0 enc_mode=000 parity_mode=00 
 
-T=220000 | ACT_REQ=1 ACT_ACK=1 | VALID=1 DATA=000a8194 CNTL=000001 | CRDGNT=1 
+T=220000 | ACT_REQ=1 ACT_ACK=1 | VALID=1 DATA=000a8114 CNTL=000001 | CRDGNT=1 
  || FSM: cur=ERROR nxt=ERROR | BUF_REL=0 ||
  CU_IN: addr=00 data=00 cfg_addr=00 cfg_data=0000 | CU_EN: rd_fifo=1 rd_cfg=0 cfg_we=0 payload_v=0 status_v=1 | MODE: addr_mode=0 enc_mode=000 parity_mode=00 
 
@@ -440,11 +440,11 @@ T=845000 | ACT_REQ=1 ACT_ACK=1 | VALID=0 DATA=00000000 CNTL=000000 | CRDGNT=1
 
 T=847000 | ACT_REQ=1 ACT_ACK=1 | VALID=0 DATA=00000000 CNTL=000000 | CRDGNT=1 
  || FSM: cur=CFG_WR nxt=CFG_SCAN | BUF_REL=0 ||
- CU_IN: addr=00 data=00 cfg_addr=00 cfg_data=8194 | CU_EN: rd_fifo=0 rd_cfg=0 cfg_we=1 payload_v=0 status_v=0 | MODE: addr_mode=0 enc_mode=000 parity_mode=00 
+ CU_IN: addr=00 data=00 cfg_addr=00 cfg_data=8114 | CU_EN: rd_fifo=0 rd_cfg=0 cfg_we=1 payload_v=0 status_v=0 | MODE: addr_mode=0 enc_mode=000 parity_mode=00 
 
 T=855000 | ACT_REQ=1 ACT_ACK=1 | VALID=0 DATA=00000000 CNTL=000000 | CRDGNT=0 
  || FSM: cur=CFG_WR nxt=CFG_SCAN | BUF_REL=0 ||
- CU_IN: addr=00 data=00 cfg_addr=00 cfg_data=8194 | CU_EN: rd_fifo=0 rd_cfg=0 cfg_we=1 payload_v=0 status_v=0 | MODE: addr_mode=0 enc_mode=000 parity_mode=00 
+ CU_IN: addr=00 data=00 cfg_addr=00 cfg_data=8114 | CU_EN: rd_fifo=0 rd_cfg=0 cfg_we=1 payload_v=0 status_v=0 | MODE: addr_mode=0 enc_mode=000 parity_mode=00 
 
 T=861000 | ACT_REQ=1 ACT_ACK=1 | VALID=0 DATA=00000000 CNTL=000000 | CRDGNT=0 
  || FSM: cur=CFG_SCAN nxt=CFG_WR | BUF_REL=0 ||
@@ -479,10 +479,10 @@ T=917000 | ACT_REQ=1 ACT_ACK=1 | VALID=0 DATA=00000000 CNTL=000000 | CRDGNT=0
  CU_IN: addr=00 data=00 cfg_addr=02 cfg_data=0000 | CU_EN: rd_fifo=1 rd_cfg=0 cfg_we=0 payload_v=0 status_v=0 | MODE: addr_mode=0 enc_mode=000 parity_mode=00 
 
 T=931000 | ACT_REQ=1 ACT_ACK=1 | VALID=0 DATA=00000000 CNTL=000000 | CRDGNT=0 
- || FSM: cur=CFG_WR nxt=CFG_SCAN | BUF_REL=0 ||
+ || FSM: cur=CFG_WR nxt=LINK_SCAN | BUF_REL=0 ||
  CU_IN: addr=00 data=00 cfg_addr=03 cfg_data=8888 | CU_EN: rd_fifo=0 rd_cfg=0 cfg_we=1 payload_v=0 status_v=0 | MODE: addr_mode=0 enc_mode=000 parity_mode=00 
 
 T=945000 | ACT_REQ=1 ACT_ACK=1 | VALID=0 DATA=00000000 CNTL=000000 | CRDGNT=0 
- || FSM: cur=CFG_SCAN nxt=CFG_SCAN | BUF_REL=0 ||
- CU_IN: addr=00 data=00 cfg_addr=03 cfg_data=0000 | CU_EN: rd_fifo=1 rd_cfg=0 cfg_we=0 payload_v=0 status_v=0 | MODE: addr_mode=0 enc_mode=000 parity_mode=00 
+ || FSM: cur=LINK_SCAN nxt=LINK_SCAN | BUF_REL=0 ||
+ CU_IN: addr=00 data=00 cfg_addr=03 cfg_data=0000 | CU_EN: rd_fifo=1 rd_cfg=1 cfg_we=0 payload_v=0 status_v=0 | MODE: addr_mode=0 enc_mode=000 parity_mode=00 
 

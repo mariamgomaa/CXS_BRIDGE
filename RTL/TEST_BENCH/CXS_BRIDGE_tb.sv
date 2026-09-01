@@ -305,7 +305,6 @@ endtask
             i_cxscntl = {
                 error1,
                 error0,
-                start1,
                 end1,
                 end0,
                 start1,
@@ -660,7 +659,7 @@ endtask
             //------------------------------------------------
                         header_form(
                 1'b1,
-                8'd3,
+                8'd2,
                 3'b01,
                 2'b01,
                 2'b00

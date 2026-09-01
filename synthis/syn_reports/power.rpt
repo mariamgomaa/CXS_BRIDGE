@@ -1,0 +1,96 @@
+Loading db file '/home/ICer/Shared_Folder/CXS_BRIDGE/std_cells/scmetro_tsmc_cl013g_rvt_ss_1p08v_125c.db'
+Information: Propagating switching activity (low effort zero delay simulation). (PWR-6)
+Warning: Design has unannotated primary inputs. (PWR-414)
+Warning: Design has unannotated sequential cell outputs. (PWR-415)
+ 
+****************************************
+Report : power
+        -hier
+        -analysis_effort low
+Design : CXS_SYSTEM_TOP
+Version: O-2018.06-SP1
+Date   : Mon Aug 31 22:36:39 2026
+****************************************
+
+
+Library(s) Used:
+
+    scmetro_tsmc_cl013g_rvt_ss_1p08v_125c (File: /home/ICer/Shared_Folder/CXS_BRIDGE/std_cells/scmetro_tsmc_cl013g_rvt_ss_1p08v_125c.db)
+
+
+Operating Conditions: scmetro_tsmc_cl013g_rvt_ss_1p08v_125c   Library: scmetro_tsmc_cl013g_rvt_ss_1p08v_125c
+Wire Load Model Mode: top
+
+
+Global Operating Voltage = 1.08 
+Power-specific unit information :
+    Voltage Units = 1V
+    Capacitance Units = 1.000000pf
+    Time Units = 1ns
+    Dynamic Power Units = 1mW    (derived from V,C,T units)
+    Leakage Power Units = 1pW
+
+
+--------------------------------------------------------------------------------
+                                       Switch   Int      Leak     Total
+Hierarchy                              Power    Power    Power    Power    %
+--------------------------------------------------------------------------------
+CXS_SYSTEM_TOP                         4.51e-02    4.007 2.03e+08    4.255 100.0
+  u_central_data_memory (central_data_memory_DATA_WIDTH17_CONFIG_DATA_W32_LOGICAL_ADD_W9_DEPTH512)
+                                       2.82e-02    3.485 1.83e+08    3.696  86.9
+  u_parity_unit (parity_unit_DATA_W16) 4.91e-06 8.44e-06 2.62e+05 2.75e-04   0.0
+  u_encryption_unit (encryption_unit_DATA_WIDTH8)
+                                       9.46e-06 1.91e-05 4.68e+05 4.97e-04   0.0
+  u_address_translation_unit (address_translation_unit_ADD_W8_LOGICAL_ADD_W9)
+                                       6.00e-06 2.30e-05 5.92e+05 6.21e-04   0.0
+    add_0_root_add_0_root_add_27_2 (address_translation_unit_ADD_W8_LOGICAL_ADD_W9_DW01_add_0)
+                                       1.53e-06 6.76e-06 2.36e+05 2.45e-04   0.0
+    add_1_root_add_0_root_add_27_2 (address_translation_unit_ADD_W8_LOGICAL_ADD_W9_DW01_add_1)
+                                       9.87e-07 9.53e-06 2.05e+05 2.15e-04   0.0
+  u_control_unit (control_unit_PAYLOAD_W16_CONFIG_DATA_W32_ADDR_W8_DATA_W8)
+                                       9.53e-04 1.71e-02 1.33e+06 1.94e-02   0.5
+    u_config_addr_ctrl (config_addr_ctrl)
+                                       2.21e-05 2.95e-03 2.49e+05 3.23e-03   0.1
+      add_39 (config_addr_ctrl_DW01_inc_0)
+                                       8.38e-07 3.14e-06 9.85e+04 1.03e-04   0.0
+    u_fsm (control_unit_fsm)           3.62e-04 7.60e-03 6.65e+05 8.63e-03   0.2
+    u_header_validator (header_validitor)
+                                       6.89e-06 2.21e-05 2.99e+04 5.89e-05   0.0
+    u_header_decoder (header_decoder)     0.000    0.000    0.000    0.000   0.0
+  u_flit_decoder (Flit_Decoder_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32_CNTL_W6_FIFO_WIDTH38_PAYLOAD_W16)
+                                       9.84e-04 1.73e-02 8.28e+05 1.91e-02   0.4
+  u_RST_SYNCH_SYSTEM (RST_SYNCH_NUMBER_STAGES2_1)
+                                       2.37e-04 1.16e-03 2.52e+04 1.42e-03   0.0
+  u_RST_SYNCH_CXS (RST_SYNCH_NUMBER_STAGES2_0)
+                                       3.08e-04 1.67e-03 2.53e+04 2.00e-03   0.0
+  u_async_fifo (async_fifo_DEPTH16_WIDTH38)
+                                       1.02e-02    0.382 1.30e+07    0.405   9.5
+  u_DATA_SYNC (DATA_SYNC_NUM_STAGES2_BUS_WIDTH4)
+                                       3.11e-06 4.39e-03 1.11e+05 4.50e-03   0.1
+  u_CXS_TOP (CXS_TOP_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32_CNTL_W6_MAX_CREDITS15_CREDIT_W4_FIFO_WIDTH38)
+                                       4.27e-03 9.89e-02 3.14e+06    0.106   2.5
+    u_CXS_TX_TOP (CXS_TX_TOP_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32_CNTL_W6_MAX_CREDITS15_CREDIT_W4)
+                                       1.17e-03 6.61e-02 2.17e+06 6.94e-02   1.6
+      u_CXS_Link_Control_TX (CXS_Link_Control_TX)
+                                          0.000 1.12e-03 4.94e+04 1.16e-03   0.0
+      u_cxscntl_encoder (cxscntl_encoder_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32_CNTL_W6)
+                                          0.000    0.000 5.26e+04 5.26e-05   0.0
+      u_CXS_flit_transmitter (CXS_flit_transmitter_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32)
+                                       5.94e-04 5.77e-02 1.81e+06 6.01e-02   1.4
+      u_CXS_TX_Credit_Counter (CXS_TX_Credit_Counter_MAX_CREDITS15_CREDIT_W4)
+                                       4.35e-04 3.51e-03 1.36e+05 4.08e-03   0.1
+      u_CXS_Pkt_Formatter (CXS_Pkt_Formatter_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32)
+                                          0.000 3.73e-03 1.11e+05 3.84e-03   0.1
+    u_CXS_RX_TOP (CXS_RX_TOP_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32_CNTL_W6_MAX_CREDITS15_CREDIT_W4_FIFO_WIDTH38)
+                                       3.10e-03 3.28e-02 9.77e+05 3.69e-02   0.9
+      u_CXS_Credit_Generator (CXS_Credit_Generator_MAX_CREDITS15_CREDIT_W4)
+                                       1.56e-03 6.82e-03 3.27e+05 8.71e-03   0.2
+      u_CXS_Link_Control (CXS_Link_Control)
+                                       9.66e-04 1.70e-03 5.37e+04 2.72e-03   0.1
+      u_CXS_Boundry_Extractor (CXS_Boundry_Extractor_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32_CNTL_W6_FIFO_WIDTH38)
+                                          0.000    0.000    0.000    0.000   0.0
+      u_cxscntl_decoder (cxscntl_decoder_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32_CNTL_W6)
+                                       1.47e-05 4.21e-05 1.86e+04 7.54e-05   0.0
+      u_CXS_flit_receiver (CXS_flit_receiver_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32_CNTL_W6)
+                                       5.62e-04 2.43e-02 5.78e+05 2.54e-02   0.6
+1

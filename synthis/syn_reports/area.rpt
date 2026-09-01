@@ -1,0 +1,88 @@
+ 
+****************************************
+Report : area
+Design : CXS_SYSTEM_TOP
+Version: O-2018.06-SP1
+Date   : Mon Aug 31 22:36:33 2026
+****************************************
+
+Information: Updating design information... (UID-85)
+Warning: Design 'CXS_SYSTEM_TOP' contains 1 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
+Library(s) Used:
+
+    scmetro_tsmc_cl013g_rvt_ss_1p08v_125c (File: /home/ICer/Shared_Folder/CXS_BRIDGE/std_cells/scmetro_tsmc_cl013g_rvt_ss_1p08v_125c.db)
+
+Number of ports:                         1372
+Number of nets:                         31294
+Number of cells:                        30028
+Number of combinational cells:          20258
+Number of sequential cells:              9740
+Number of macros/black boxes:               0
+Number of buf/inv:                       2919
+Number of references:                      18
+
+Combinational area:             145788.427682
+Buf/Inv area:                    13384.962491
+Noncombinational area:          209911.505808
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (No wire load specified)
+
+Total cell area:                355699.933490
+Total area:                 undefined
+
+Hierarchical area distribution
+------------------------------
+
+                                  Global cell area              Local cell area
+                                  --------------------  -------------------------------- 
+Hierarchical cell                 Absolute     Percent  Combi-       Noncombi-    Black-
+                                  Total        Total    national     national     boxes   Design
+--------------------------------  -----------  -------  -----------  -----------  ------  ------------------------------------------------------------------------------------------------
+CXS_SYSTEM_TOP                    355699.9335    100.0     265.9342       0.0000  0.0000  CXS_SYSTEM_TOP
+u_CXS_TOP                           6095.3060      1.7       0.0000       0.0000  0.0000  CXS_TOP_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32_CNTL_W6_MAX_CREDITS15_CREDIT_W4_FIFO_WIDTH38
+u_CXS_TOP/u_CXS_RX_TOP              1962.7356      0.6       0.0000       0.0000  0.0000  CXS_RX_TOP_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32_CNTL_W6_MAX_CREDITS15_CREDIT_W4_FIFO_WIDTH38
+u_CXS_TOP/u_CXS_RX_TOP/u_CXS_Boundry_Extractor
+                                       0.0000      0.0       0.0000       0.0000  0.0000  CXS_Boundry_Extractor_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32_CNTL_W6_FIFO_WIDTH38
+u_CXS_TOP/u_CXS_RX_TOP/u_CXS_Credit_Generator
+                                     583.6432      0.2     350.6566     232.9866  0.0000  CXS_Credit_Generator_MAX_CREDITS15_CREDIT_W4
+u_CXS_TOP/u_CXS_RX_TOP/u_CXS_Link_Control
+                                      89.4292      0.0      37.6544      51.7748  0.0000  CXS_Link_Control
+u_CXS_TOP/u_CXS_RX_TOP/u_CXS_flit_receiver
+                                    1254.3622      0.4     244.7536    1009.6086  0.0000  CXS_flit_receiver_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32_CNTL_W6
+u_CXS_TOP/u_CXS_RX_TOP/u_cxscntl_decoder
+                                      35.3010      0.0      35.3010       0.0000  0.0000  cxscntl_decoder_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32_CNTL_W6
+u_CXS_TOP/u_CXS_TX_TOP              4132.5704      1.2       7.0602       0.0000  0.0000  CXS_TX_TOP_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32_CNTL_W6_MAX_CREDITS15_CREDIT_W4
+u_CXS_TOP/u_CXS_TX_TOP/u_CXS_Link_Control_TX
+                                      87.0758      0.0      34.1243      52.9515  0.0000  CXS_Link_Control_TX
+u_CXS_TOP/u_CXS_TX_TOP/u_CXS_Pkt_Formatter
+                                     234.1633      0.1      52.9515     181.2118  0.0000  CXS_Pkt_Formatter_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32
+u_CXS_TOP/u_CXS_TX_TOP/u_CXS_TX_Credit_Counter
+                                     256.5206      0.1     151.7943     104.7263  0.0000  CXS_TX_Credit_Counter_MAX_CREDITS15_CREDIT_W4
+u_CXS_TOP/u_CXS_TX_TOP/u_CXS_flit_transmitter
+                                    3470.0883      1.0    1095.5077    2374.5806  0.0000  CXS_flit_transmitter_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32
+u_CXS_TOP/u_CXS_TX_TOP/u_cxscntl_encoder
+                                      77.6622      0.0      77.6622       0.0000  0.0000  cxscntl_encoder_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32_CNTL_W6
+u_DATA_SYNC                          254.1672      0.1      47.0680     207.0992  0.0000  DATA_SYNC_NUM_STAGES2_BUS_WIDTH4
+u_RST_SYNCH_CXS                       51.7748      0.0       0.0000      51.7748  0.0000  RST_SYNCH_NUMBER_STAGES2_0
+u_RST_SYNCH_SYSTEM                    51.7748      0.0       0.0000      51.7748  0.0000  RST_SYNCH_NUMBER_STAGES2_1
+u_address_translation_unit           697.7831      0.2     209.4526       0.0000  0.0000  address_translation_unit_ADD_W8_LOGICAL_ADD_W9
+u_address_translation_unit/add_0_root_add_0_root_add_27_2
+                                     256.5206      0.1     256.5206       0.0000  0.0000  address_translation_unit_ADD_W8_LOGICAL_ADD_W9_DW01_add_0
+u_address_translation_unit/add_1_root_add_0_root_add_27_2
+                                     231.8099      0.1     231.8099       0.0000  0.0000  address_translation_unit_ADD_W8_LOGICAL_ADD_W9_DW01_add_1
+u_async_fifo                       27954.8620      7.9   10325.5428   17629.3192  0.0000  async_fifo_DEPTH16_WIDTH38
+u_central_data_memory             315084.9562     88.6  129300.5069  185784.4493  0.0000  central_data_memory_DATA_WIDTH17_CONFIG_DATA_W32_LOGICAL_ADD_W9_DEPTH512
+u_control_unit                      2582.8565      0.7     502.4509     414.1984  0.0000  control_unit_PAYLOAD_W16_CONFIG_DATA_W32_ADDR_W8_DATA_W8
+u_control_unit/u_config_addr_ctrl    418.9052      0.1     104.7263     207.0992  0.0000  config_addr_ctrl
+u_control_unit/u_config_addr_ctrl/add_39
+                                     107.0797      0.0     107.0797       0.0000  0.0000  config_addr_ctrl_DW01_inc_0
+u_control_unit/u_fsm                1217.8845      0.3     721.3171     496.5674  0.0000  control_unit_fsm
+u_control_unit/u_header_decoder        0.0000      0.0       0.0000       0.0000  0.0000  header_decoder
+u_control_unit/u_header_validator     29.4175      0.0      29.4175       0.0000  0.0000  header_validitor
+u_encryption_unit                    574.2296      0.2     574.2296       0.0000  0.0000  encryption_unit_DATA_WIDTH8
+u_flit_decoder                      1792.1141      0.5     730.7307    1061.3834  0.0000  Flit_Decoder_CXSMAXPAYLOADPERFLIT2_CXSDATAFLITWIDTH32_CNTL_W6_FIFO_WIDTH38_PAYLOAD_W16
+u_parity_unit                        294.1750      0.1     294.1750       0.0000  0.0000  parity_unit_DATA_W16
+--------------------------------  -----------  -------  -----------  -----------  ------  ------------------------------------------------------------------------------------------------
+Total                                                   145788.4277  209911.5058  0.0000
+
+1

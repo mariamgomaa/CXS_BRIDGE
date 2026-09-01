@@ -1,0 +1,62 @@
+#!SPYGLASS_PROJECT_FILE
+#!VERSION 3.0
+#  -------------------------------------------------------------------
+#  This is a software generated project file. Manual edits to this file could be lost during the next save operation
+#  Copyright Synopsys Inc.
+#  Last Updated By: SpyGlass SpyGlass_vL-2016.06
+#  Last Updated On Mon Aug 31 04:04:40 2026
+#
+#  -------------------------------------------------------------------
+
+##Data Import Section
+
+read_file -type verilog CXS_BRIDGE_TOP.sv
+read_file -type verilog ../ATU/ATU.sv
+read_file -type verilog ../CDC_ASYNCH_FIFO_SYNCHRONIAZER/Asynch_FIFO.sv
+read_file -type verilog ../CDC_ASYNCH_FIFO_SYNCHRONIAZER/RST_SYNC.sv
+read_file -type verilog ../CDC_ASYNCH_FIFO_SYNCHRONIAZER/Data_synch.sv
+read_file -type verilog ../CDM/CDM.sv
+read_file -type verilog ../CXS_INTERFACE/CXS_RX/CXS_Boundry_Extractor.sv
+read_file -type verilog ../CXS_INTERFACE/CXS_RX/CXS_Credit_Generator.sv
+read_file -type verilog ../CXS_INTERFACE/CXS_RX/CXS_Decoder.sv
+read_file -type verilog ../CXS_INTERFACE/CXS_RX/CXS_Link_Control.sv
+read_file -type verilog ../CXS_INTERFACE/CXS_RX/CXS_Reciever.sv
+read_file -type verilog ../CXS_INTERFACE/CXS_RX/CXS_RX_TOP.sv
+read_file -type verilog ../CXS_INTERFACE/CXS_TOP/CXS_TOP.sv
+read_file -type verilog ../CXS_INTERFACE/CXS_TX/CXS_Cntl_Encoder.sv
+read_file -type verilog ../CXS_INTERFACE/CXS_TX/CXS_flit_transmitter.sv
+read_file -type verilog ../CXS_INTERFACE/CXS_TX/CXS_Link_Control_TX.sv
+read_file -type verilog ../CXS_INTERFACE/CXS_TX/CXS_Pkt_Formatter.sv
+read_file -type verilog ../CXS_INTERFACE/CXS_TX/CXS_TX_Credit_Counter.sv
+read_file -type verilog ../CXS_INTERFACE/CXS_TX/CXS_TX_TOP.sv
+read_file -type verilog ../ENCRYPTION_PARITY/encryption_unit.sv
+read_file -type verilog ../ENCRYPTION_PARITY/parity_unit.sv
+read_file -type verilog ../FLIT_DECODER/Flit_Decoder.sv
+read_file -type gateslib ../../std_cells/scmetro_tsmc_cl013g_rvt_tt_1p2v_25c.lib
+read_file -type verilog ../CONTROL_UNIT/config_addr_ctrl.sv
+read_file -type verilog ../CONTROL_UNIT/control_unit.sv
+read_file -type verilog ../CONTROL_UNIT/control_unit_fsm.sv
+read_file -type verilog ../CONTROL_UNIT/header_decoder.sv
+read_file -type verilog ../CONTROL_UNIT/header_validitor.sv
+
+##Common Options Section
+
+set_option projectwdir .
+set_option language_mode mixed
+set_option designread_enable_synthesis yes
+set_option designread_disable_flatten no
+set_option enableSV yes
+set_option enable_gateslib_autocompile yes
+set_option mthresh 16384
+set_option active_methodology $SPYGLASS_HOME/GuideWare/latest/block/rtl_handoff
+
+
+##Goal Setup Section
+
+current_methodology $SPYGLASS_HOME/GuideWare/latest/block/rtl_handoff
+
+
+current_goal lint/lint_rtl -alltop
+read_file -type awl ./spyglass-1/lint/lint_rtl/spyglass-1_waiver_file.awl
+set_goal_option default_waiver_file ./spyglass-1/lint/lint_rtl/spyglass-1_waiver_file.awl
+
